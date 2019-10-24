@@ -3,19 +3,23 @@
 // http://patreon.com/codingtrain
 // Code for: https://youtu.be/kKT0v3qhIQY
 
-function Tree() {
-  this.leaves = [];
+function Tree(x = width / 2, y = height / 2) {
   this.branches = [];
+  this.leaves = [];
 
   for (var i = 0; i < 1500; i++) {
     this.leaves.push(new Leaf());
   }
-  var pos = createVector(width / 2, height);
-  var dir = createVector(0, -1);
+
+  var pos = createVector(x, y);
+  var dir = createVector(0, 0);
   var root = new Branch(null, pos, dir);
+
   this.branches.push(root);
+
   var current = root;
   var found = false;
+
   while (!found) {
     for (var i = 0; i < this.leaves.length; i++) {
       var d = p5.Vector.dist(current.pos, this.leaves[i].pos);
@@ -35,6 +39,7 @@ function Tree() {
       var leaf = this.leaves[i];
       var closestBranch = null;
       var record = max_dist;
+
       for (var j = 0; j < this.branches.length; j++) {
         var branch = this.branches[j];
         var d = p5.Vector.dist(leaf.pos, branch.pos);
@@ -70,21 +75,16 @@ function Tree() {
         branch.reset();
       }
     }
-  }
+  };
 
-
-
-
-
-  this.show = function() {
-    for (var i = 0; i < this.leaves.length; i++) {
-      this.leaves[i].show();
+  this.show = function(showLeaves = false) {
+    if (showLeaves) {
+      for (var i = 0; i < this.leaves.length; i++) {
+        this.leaves[i].show();
+      }
     }
-
     for (var i = 0; i < this.branches.length; i++) {
       this.branches[i].show();
     }
-
-  }
-
+  };
 }

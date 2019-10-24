@@ -3,17 +3,37 @@
 // http://patreon.com/codingtrain
 // Code for: https://youtu.be/kKT0v3qhIQY
 
-var tree;
 var max_dist = 100;
-var min_dist = 10;
+var min_dist = 5;
+
+let grow = false,
+  showLeaves = true;
+
+var tree;
 
 function setup() {
-  createCanvas(400, 400);
+  let r = 3;
+  let cnv = createCanvas(210 * r, 297 * r);
   tree = new Tree();
+
+  createButton("grow").mousePressed(() => {
+    grow = !grow;
+  });
+
+  createButton("show leaves").mousePressed(() => {
+    showLeaves = !showLeaves;
+  });
+
+  cnv.mouseClicked(e => {
+    tree = new Tree(mouseX, mouseY);
+    console.log(tree);
+  });
 }
 
 function draw() {
-  background(51);
-  tree.show();
-  tree.grow();
+  background("#cb0072");
+  tree.show(showLeaves);
+  if (grow) {
+    tree.grow();
+  }
 }
