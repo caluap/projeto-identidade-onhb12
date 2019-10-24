@@ -57,11 +57,14 @@ function Tree(x = width / 2, y = height / 2) {
         closestBranch.count++;
       }
     }
-
     for (var i = leaves.length - 1; i >= 0; i--) {
       if (leaves[i].reached) {
         leaves.splice(i, 1);
       }
+    }
+
+    if (leaves.length == 0) {
+      toggleGrow();
     }
 
     for (var i = this.branches.length - 1; i >= 0; i--) {

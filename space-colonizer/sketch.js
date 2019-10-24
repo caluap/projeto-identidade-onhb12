@@ -14,6 +14,8 @@ var trees = [];
 
 let rootMode = false;
 
+let growButton, showLeavesButton, penModeButton;
+
 function setup() {
   let r = 3;
   let cnv = createCanvas(210 * r, 297 * r);
@@ -22,21 +24,16 @@ function setup() {
 
   createP();
 
-  let growButton = createButton(`grow: ${grow}`).mousePressed(() => {
-    grow = !grow;
-    growButton.elt.textContent = `grow: ${grow}`;
-  });
+  growButton = createButton(`grow: ${grow}`).mousePressed(toggleGrow);
 
-  let showLeavesButton = createButton(`leaves: ${showLeaves}`).mousePressed(
-    () => {
-      showLeaves = !showLeaves;
-      showLeavesButton.elt.textContent = `leaves: ${showLeaves}`;
-    }
-  );
+  showLeavesButton = createButton(`leaves: ${showLeaves}`).mousePressed(() => {
+    showLeaves = !showLeaves;
+    showLeavesButton.elt.textContent = `leaves: ${showLeaves}`;
+  });
 
   createButton("random leaves").mousePressed(randomizeLeaves);
 
-  let penModeButton = createButton("pen mode: leaves").mousePressed(() => {
+  penModeButton = createButton("pen mode: leaves").mousePressed(() => {
     if (rootMode) {
       penModeButton.elt.textContent = "pen mode: leaves";
       rootMode = false;
@@ -61,6 +58,11 @@ function setup() {
       console.log(trees[trees.length - 1]);
     }
   });
+}
+
+function toggleGrow() {
+  grow = !grow;
+  growButton.elt.textContent = `grow: ${grow}`;
 }
 
 function mouseDragged() {
