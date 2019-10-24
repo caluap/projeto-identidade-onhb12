@@ -9,12 +9,20 @@ var min_dist = 5;
 let grow = false,
   showLeaves = true;
 
-var tree;
+var leaves = [];
+var trees = [];
 
 function setup() {
   let r = 3;
   let cnv = createCanvas(210 * r, 297 * r);
-  tree = new Tree();
+
+  for (var i = 0; i < 500; i++) {
+    leaves.push(new Leaf());
+  }
+
+  trees.push(new Tree());
+
+  createP();
 
   createButton("grow").mousePressed(() => {
     grow = !grow;
@@ -25,15 +33,23 @@ function setup() {
   });
 
   cnv.mouseClicked(e => {
-    tree = new Tree(mouseX, mouseY);
-    console.log(tree);
+    trees.push(new Tree(mouseX, mouseY));
+    console.log(trees[trees.length - 1]);
   });
 }
 
 function draw() {
   background("#cb0072");
-  tree.show(showLeaves);
-  if (grow) {
-    tree.grow();
+
+  if (showLeaves) {
+    for (var i = 0; i < leaves.length; i++) {
+      leaves[i].show();
+    }
+  }
+  for (i = 0; i < trees.length; i++) {
+    trees[i].show();
+  }
+  if (grow && trees.length > 0) {
+    trees[trees.length - 1].grow();
   }
 }

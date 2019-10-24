@@ -5,11 +5,6 @@
 
 function Tree(x = width / 2, y = height / 2) {
   this.branches = [];
-  this.leaves = [];
-
-  for (var i = 0; i < 1500; i++) {
-    this.leaves.push(new Leaf());
-  }
 
   var pos = createVector(x, y);
   var dir = createVector(0, 0);
@@ -21,8 +16,8 @@ function Tree(x = width / 2, y = height / 2) {
   var found = false;
 
   while (!found) {
-    for (var i = 0; i < this.leaves.length; i++) {
-      var d = p5.Vector.dist(current.pos, this.leaves[i].pos);
+    for (var i = 0; i < leaves.length; i++) {
+      var d = p5.Vector.dist(current.pos, leaves[i].pos);
       if (d < max_dist) {
         found = true;
       }
@@ -35,8 +30,8 @@ function Tree(x = width / 2, y = height / 2) {
   }
 
   this.grow = function() {
-    for (var i = 0; i < this.leaves.length; i++) {
-      var leaf = this.leaves[i];
+    for (var i = 0; i < leaves.length; i++) {
+      var leaf = leaves[i];
       var closestBranch = null;
       var record = max_dist;
 
@@ -61,9 +56,9 @@ function Tree(x = width / 2, y = height / 2) {
       }
     }
 
-    for (var i = this.leaves.length - 1; i >= 0; i--) {
-      if (this.leaves[i].reached) {
-        this.leaves.splice(i, 1);
+    for (var i = leaves.length - 1; i >= 0; i--) {
+      if (leaves[i].reached) {
+        leaves.splice(i, 1);
       }
     }
 
@@ -77,12 +72,7 @@ function Tree(x = width / 2, y = height / 2) {
     }
   };
 
-  this.show = function(showLeaves = false) {
-    if (showLeaves) {
-      for (var i = 0; i < this.leaves.length; i++) {
-        this.leaves[i].show();
-      }
-    }
+  this.show = function() {
     for (var i = 0; i < this.branches.length; i++) {
       this.branches[i].show();
     }
