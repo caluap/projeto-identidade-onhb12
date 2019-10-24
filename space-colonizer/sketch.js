@@ -12,29 +12,31 @@ let grow = false,
 var leaves = [];
 var trees = [];
 
-let penModeButton;
-let rootMode = true;
+let rootMode = false;
 
 function setup() {
-  let r = 2.4;
+  let r = 3;
   let cnv = createCanvas(210 * r, 297 * r);
 
-  randomizeLeaves();
   trees.push(new Tree());
 
   createP();
 
-  createButton("grow").mousePressed(() => {
+  let growButton = createButton(`grow: ${grow}`).mousePressed(() => {
     grow = !grow;
+    growButton.elt.textContent = `grow: ${grow}`;
   });
 
-  createButton("show leaves").mousePressed(() => {
-    showLeaves = !showLeaves;
-  });
+  let showLeavesButton = createButton(`leaves: ${showLeaves}`).mousePressed(
+    () => {
+      showLeaves = !showLeaves;
+      showLeavesButton.elt.textContent = `leaves: ${showLeaves}`;
+    }
+  );
 
-  createButton("randomize leaves").mousePressed(randomizeLeaves);
+  createButton("random leaves").mousePressed(randomizeLeaves);
 
-  penModeButton = createButton("pen mode: root").mousePressed(() => {
+  let penModeButton = createButton("pen mode: leaves").mousePressed(() => {
     if (rootMode) {
       penModeButton.elt.textContent = "pen mode: leaves";
       rootMode = false;
@@ -45,18 +47,29 @@ function setup() {
     console.log(penModeButton);
   });
 
-  cnv.mouseClicked(e => {
+  createButton("clear leaves").mousePressed(() => {
+    leaves = [];
+  });
+
+  createButton("clear trees").mousePressed(() => {
+    trees = [];
+  });
+
+  cnv.mouseClicked(() => {
     if (rootMode) {
       trees.push(new Tree(mouseX, mouseY));
       console.log(trees[trees.length - 1]);
-    } else {
-      // adds 30 randomly placed leaves around the mouse position
-      for (let i = 0; i < 30; i++) {
-        let p = randomPoint(mouseX, mouseY, 50);
-        leaves.push(new Leaf(p));
-      }
     }
   });
+}
+
+function mouseDragged() {
+  if (!rootMode) {
+    for (let i = 0; i < 2; i++) {
+      let p = randomPoint(mouseX, mouseY, 10);
+      leaves.push(new Leaf(p));
+    }
+  }
 }
 
 function randomPoint(x, y, radius) {
@@ -66,8 +79,7 @@ function randomPoint(x, y, radius) {
 }
 
 function randomizeLeaves() {
-  leaves = [];
-  for (var i = 0; i < 10; i++) {
+  for (var i = 0; i < 100; i++) {
     leaves.push(new Leaf());
   }
 }
