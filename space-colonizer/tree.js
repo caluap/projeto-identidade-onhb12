@@ -15,17 +15,19 @@ function Tree(x = width / 2, y = height / 2) {
   var current = root;
   var found = false;
 
-  while (!found) {
-    for (var i = 0; i < leaves.length; i++) {
-      var d = p5.Vector.dist(current.pos, leaves[i].pos);
-      if (d < max_dist) {
-        found = true;
+  if (leaves.length > 0) {
+    while (!found) {
+      for (var i = 0; i < leaves.length; i++) {
+        var d = p5.Vector.dist(current.pos, leaves[i].pos);
+        if (d < max_dist) {
+          found = true;
+        }
       }
-    }
-    if (!found) {
-      var branch = current.next();
-      current = branch;
-      this.branches.push(current);
+      if (!found) {
+        var branch = current.next();
+        current = branch;
+        this.branches.push(current);
+      }
     }
   }
 

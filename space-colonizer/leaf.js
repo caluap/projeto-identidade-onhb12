@@ -3,8 +3,13 @@
 // http://patreon.com/codingtrain
 // Code for: https://youtu.be/kKT0v3qhIQY
 
-function Leaf() {
+function Leaf(p = null) {
   this.pos = createVector(random(width), random(height));
+  if (p === null) {
+    this.pos = createVector(random(width), random(height));
+  } else {
+    this.pos = createVector(p.x, p.y);
+  }
   this.reached = false;
 
   this.show = function() {
