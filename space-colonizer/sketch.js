@@ -7,7 +7,7 @@ let w = 210 * r,
 
 let growButton, showLeavesButton, penModeButton;
 
-function saveSVG() {
+function saveSVG(strokeWeight) {
   let svgSketch = new p5(sketch => {
     sketch.setup = () => {
       let cnv = sketch.createCanvas(w, h, sketch.SVG);
@@ -17,7 +17,7 @@ function saveSVG() {
       sketch.background("#cb0072");
       sketch.stroke(255);
       for (let i = 0; i < trees.length; i++) {
-        trees[i].show(sketch, parseInt(sliderStroke.value()));
+        trees[i].show(sketch, strokeWeight);
       }
       sketch.noLoop();
       console.log("will save...");
@@ -135,7 +135,7 @@ let regularSketch = new p5(sketch => {
 
     els.push(
       sketch.createButton("save").mousePressed(() => {
-        saveSVG();
+        saveSVG(parseInt(sliderStroke.value()));
       })
     );
 
