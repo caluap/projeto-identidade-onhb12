@@ -102,7 +102,7 @@ let regularSketch = new p5(sketch => {
 
     els.push(sketch.createP(""));
 
-    sliderRadius = sketch.createSlider(5, 100, 20, 1);
+    sliderRadius = sketch.createSlider(5, 200, 20, 1);
     els.push(sketch.createP("radius"));
     els.push(sliderRadius);
 
