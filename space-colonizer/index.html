@@ -30,5 +30,24 @@
   <body>
     <div id="regular-canvas-container"></div>
     <div id="hidden-canvas-container" style="display:none;"></div>
+
+    <div id="control-panel">
+      <style type="text/css">
+        #control-panel {
+          position: fixed;
+          right: 0;
+          top: 0;
+          bottom: 0;
+          width: 200px;
+          background: #eee;
+          display: flex;
+          flex-direction: column;
+          padding: 1rem;
+        }
+        #control-panel * + * {
+          margin-top: 0.5rem;
+        }
+      </style>
+    </div>
   </body>
 </html>

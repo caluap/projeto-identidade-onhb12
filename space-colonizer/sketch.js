@@ -64,9 +64,10 @@ let regularSketch = new p5(sketch => {
 
     trees.push(new Tree(sketch.width / 2, sketch.height / 2, sketch));
 
-    sketch.createP("");
+    let els = [];
 
     growButton = sketch.createButton(`grow: ${grow}`).mousePressed(toggleGrow);
+    els.push(growButton);
 
     showLeavesButton = sketch
       .createButton(`leaves: ${showLeaves}`)
@@ -75,7 +76,11 @@ let regularSketch = new p5(sketch => {
         showLeavesButton.elt.textContent = `leaves: ${showLeaves}`;
       });
 
-    sketch.createButton("random leaves").mousePressed(randomizeLeaves);
+    els.push(showLeavesButton);
+
+    els.push(
+      sketch.createButton("random leaves").mousePressed(randomizeLeaves)
+    );
 
     penModeButton = sketch.createButton("pen mode: leaves").mousePressed(() => {
       if (rootMode) {
@@ -87,26 +92,40 @@ let regularSketch = new p5(sketch => {
       }
     });
 
-    sketch.createP("");
+    els.push(penModeButton);
 
-    sketch.createButton("clear leaves").mousePressed(() => {
-      leaves = [];
-    });
+    els.push(sketch.createP(""));
 
-    sketch.createButton("clear trees").mousePressed(() => {
-      trees = [];
-    });
+    els.push(
+      sketch.createButton("clear leaves").mousePressed(() => {
+        leaves = [];
+      })
+    );
 
-    sketch.createP("");
+    els.push(
+      sketch.createButton("clear trees").mousePressed(() => {
+        trees = [];
+      })
+    );
 
-    sketch.createButton("save").mousePressed(() => {
-      saveSVG();
-    });
+    els.push(sketch.createP(""));
+
+    els.push(
+      sketch.createButton("save").mousePressed(() => {
+        saveSVG();
+      })
+    );
 
     cnv.mouseClicked(() => {
       if (rootMode) {
         trees.push(new Tree(sketch.mouseX, sketch.mouseY, sketch));
       }
+    });
+
+    let parentEl = document.getElementById("control-panel");
+
+    els.forEach(el => {
+      el.parent(parentEl);
     });
   };
 
