@@ -46,6 +46,16 @@ let regularSketch = new p5(sketch => {
     }
   };
 
+  sketch.keyPressed = () => {
+    if (sketch.keyCode == 67 && uploadedImage) {
+      let c = sketch.get(sketch.mouseX, sketch.mouseY);
+      console.log(`${sketch.mouseX}/${sketch.mouseY}/${c}`);
+      document.getElementById("picked-color").style.backgroundColor = `rgb(${
+        c[0]
+      }, ${c[1]}, ${c[2]})`;
+    }
+  };
+
   toggleGrow = () => {
     grow = !grow;
     growButton.elt.textContent = `grow: ${grow}`;
