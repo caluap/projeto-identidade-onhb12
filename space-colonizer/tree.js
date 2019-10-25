@@ -3,11 +3,14 @@
 // http://patreon.com/codingtrain
 // Code for: https://youtu.be/kKT0v3qhIQY
 
-function Tree(x = width / 2, y = height / 2) {
+function Tree(x, y, sketch) {
   this.branches = [];
 
-  var pos = createVector(x, y);
-  var dir = createVector(0, 0);
+  this.min_dist = 2;
+  this.max_dist = 100;
+
+  var pos = sketch.createVector(x, y);
+  var dir = sketch.createVector(0, -1);
   var root = new Branch(null, pos, dir);
 
   this.branches.push(root);
@@ -19,7 +22,7 @@ function Tree(x = width / 2, y = height / 2) {
     while (!found) {
       for (var i = 0; i < leaves.length; i++) {
         var d = p5.Vector.dist(current.pos, leaves[i].pos);
-        if (d < max_dist) {
+        if (d < this.max_dist) {
           found = true;
         }
       }
@@ -35,12 +38,12 @@ function Tree(x = width / 2, y = height / 2) {
     for (var i = 0; i < leaves.length; i++) {
       var leaf = leaves[i];
       var closestBranch = null;
-      var record = max_dist;
+      var record = this.max_dist;
 
       for (var j = 0; j < this.branches.length; j++) {
         var branch = this.branches[j];
         var d = p5.Vector.dist(leaf.pos, branch.pos);
-        if (d < min_dist) {
+        if (d < this.min_dist) {
           leaf.reached = true;
           closestBranch = null;
           break;
@@ -64,7 +67,7 @@ function Tree(x = width / 2, y = height / 2) {
     }
 
     if (leaves.length == 0) {
-      toggleGrow();
+      return false;
     }
 
     for (var i = this.branches.length - 1; i >= 0; i--) {
@@ -75,11 +78,12 @@ function Tree(x = width / 2, y = height / 2) {
         branch.reset();
       }
     }
+    return true;
   };
 
-  this.show = function() {
+  this.show = function(sketch) {
     for (var i = 0; i < this.branches.length; i++) {
-      this.branches[i].show();
+      this.branches[i].show(sketch);
     }
   };
 }
