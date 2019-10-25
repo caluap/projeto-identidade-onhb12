@@ -36,6 +36,16 @@ let regularSketch = new p5(sketch => {
     showLeaves = true,
     rootMode = false;
 
+  let uploadedImage = null;
+
+  handleUpload = file => {
+    if (file.type === "image") {
+      uploadedImage = sketch.loadImage(file.data, () => {
+        console.log("Uploaded image loaded successfully!");
+      });
+    }
+  };
+
   toggleGrow = () => {
     grow = !grow;
     growButton.elt.textContent = `grow: ${grow}`;
@@ -144,6 +154,10 @@ let regularSketch = new p5(sketch => {
 
     els.push(sketch.createP(""));
 
+    els.push(sketch.createFileInput(handleUpload));
+
+    els.push(sketch.createP(""));
+
     els.push(
       sketch.createButton("save").mousePressed(() => {
         saveSVG(parseInt(sliderStroke.value()));
@@ -168,6 +182,10 @@ let regularSketch = new p5(sketch => {
       sketch.background("#009900");
     } else {
       sketch.background("#cb0072");
+    }
+
+    if (uploadedImage) {
+      sketch.image(uploadedImage, 0, 0, sketch.width, sketch.height);
     }
 
     if (showLeaves) {
