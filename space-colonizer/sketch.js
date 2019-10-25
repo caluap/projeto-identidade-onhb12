@@ -1,6 +1,9 @@
 var trees = [];
 var leaves = [];
 
+let min_dist = 5,
+  max_dist = 100;
+
 let r = 4;
 let w = 210 * r,
   h = 297 * r;
@@ -27,7 +30,7 @@ function saveSVG(strokeWeight) {
 }
 
 let regularSketch = new p5(sketch => {
-  let sliderRadius, sliderDensity, sliderStroke;
+  let sliderRadius, sliderDensity, sliderStroke, sliderMinDist;
 
   let grow = false,
     showLeaves = true,
@@ -113,6 +116,14 @@ let regularSketch = new p5(sketch => {
     els.push(sketch.createP("stroke"));
     sliderStroke = sketch.createSlider(1, 6, 3, 0.5);
     els.push(sliderStroke);
+
+    els.push(sketch.createP("min dist"));
+
+    sliderMinDist = sketch.createSlider(2, 10, 5, 1).input(() => {
+      min_dist = parseInt(sliderMinDist.value());
+    });
+
+    els.push(sliderMinDist);
 
     els.push(sketch.createP(""));
 

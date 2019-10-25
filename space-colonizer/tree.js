@@ -1,9 +1,6 @@
 function Tree(x, y, sketch) {
   this.branches = [];
 
-  this.min_dist = 5;
-  this.max_dist = 100;
-
   var pos = sketch.createVector(x, y);
   var dir = sketch.createVector(0, -1);
   var root = new Branch(null, pos, dir);
@@ -13,12 +10,12 @@ function Tree(x, y, sketch) {
     for (let i = 0; i < leaves.length; i++) {
       var leaf = leaves[i];
       var closestBranch = null;
-      var record = this.max_dist;
+      var record = max_dist;
 
       for (let j = 0; j < this.branches.length; j++) {
         var branch = this.branches[j];
         var d = p5.Vector.dist(leaf.pos, branch.pos);
-        if (d < this.min_dist) {
+        if (d < min_dist) {
           leaf.reached = true;
           closestBranch = null;
           break;
