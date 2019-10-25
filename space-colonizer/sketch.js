@@ -104,7 +104,10 @@ let regularSketch = new p5(sketch => {
 
     els.push(
       sketch.createButton("clear trees").mousePressed(() => {
-        trees = [];
+        let r = confirm("sure?");
+        if (r) {
+          trees = [];
+        }
       })
     );
 
