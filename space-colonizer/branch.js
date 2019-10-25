@@ -33,7 +33,7 @@ function Branch(parent, pos, dir, level = 0) {
 
       if (this.isLastChild) {
         // draws leaft;
-        let leafSize = 5;
+        let leafSize = 4;
 
         let end = p5.Vector.mult(this.dir, leafSize);
         end.add(this.pos);
@@ -46,20 +46,52 @@ function Branch(parent, pos, dir, level = 0) {
         mid1.setMag(0.559 * leafSize);
         mid1.add(this.pos);
 
+        let cp1_1 = dir.copy();
+        cp1_1.rotate(-sketch.TWO_PI / 4);
+        cp1_1.setMag(0.25 * leafSize);
+        cp1_1.add(this.parent.pos);
+        cp1_1.lerp(mid1, 0.448);
+
+        let cp1_2 = dir.copy();
+        cp1_2.rotate(-sketch.TWO_PI / 4);
+        cp1_2.setMag(0.25 * leafSize);
+        cp1_2.add(end);
+        cp1_2.lerp(mid1, 0.448);
+
         let mid2 = dir.copy();
         mid2.rotate(sketch.TWO_PI / 4);
         mid2.setMag(0.559 * leafSize);
         mid2.add(this.pos);
 
+        let cp2_1 = dir.copy();
+        cp2_1.rotate(sketch.TWO_PI / 4);
+        cp2_1.setMag(0.25 * leafSize);
+        cp2_1.add(this.parent.pos);
+        cp2_1.lerp(mid2, 0.448);
+
+        let cp2_2 = dir.copy();
+        cp2_2.rotate(sketch.TWO_PI / 4);
+        cp2_2.setMag(0.25 * leafSize);
+        cp2_2.add(end);
+        cp2_2.lerp(mid2, 0.448);
+
         sketch.fill(255);
 
         sketch.beginShape();
-        sketch.vertex(this.parent.pos.x, this.parent.pos.y);
-        sketch.vertex(mid1.x, mid1.y);
-        sketch.vertex(end.x, end.y);
-        sketch.vertex(mid2.x, mid2.y);
-        sketch.vertex(this.parent.pos.x, this.parent.pos.y);
+        sketch.curveVertex(this.parent.pos.x, this.parent.pos.y);
+        sketch.curveVertex(this.parent.pos.x, this.parent.pos.y);
+        sketch.curveVertex(cp1_1.x, cp1_1.y);
+        sketch.curveVertex(mid1.x, mid1.y);
+        sketch.curveVertex(cp1_2.x, cp1_2.y);
+        sketch.curveVertex(end.x, end.y);
+        sketch.curveVertex(cp2_2.x, cp2_2.y);
+        sketch.curveVertex(mid2.x, mid2.y);
+        sketch.curveVertex(cp2_1.x, cp2_1.y);
+        sketch.curveVertex(this.parent.pos.x, this.parent.pos.y);
+        sketch.curveVertex(this.parent.pos.x, this.parent.pos.y);
         sketch.endShape();
+
+        sketch.noFill();
       } else {
         sketch.stroke(255);
         sketch.line(
