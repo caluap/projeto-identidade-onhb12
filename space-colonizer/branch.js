@@ -32,12 +32,43 @@ function Branch(parent, pos, dir, level = 0) {
       }
 
       if (this.isLastChild) {
-        sketch.stroke(0, 0, 255);
+        // draws leaft;
+        let leafSize = 5;
+
+        let end = p5.Vector.mult(this.dir, leafSize);
+        end.add(this.pos);
+
+        // 27 degrees
+        // .559 * leafSize
+
+        let mid1 = dir.copy();
+        mid1.rotate(-sketch.TWO_PI / 4);
+        mid1.setMag(0.559 * leafSize);
+        mid1.add(this.pos);
+
+        let mid2 = dir.copy();
+        mid2.rotate(sketch.TWO_PI / 4);
+        mid2.setMag(0.559 * leafSize);
+        mid2.add(this.pos);
+
+        sketch.fill(255);
+
+        sketch.beginShape();
+        sketch.vertex(this.parent.pos.x, this.parent.pos.y);
+        sketch.vertex(mid1.x, mid1.y);
+        sketch.vertex(end.x, end.y);
+        sketch.vertex(mid2.x, mid2.y);
+        sketch.vertex(this.parent.pos.x, this.parent.pos.y);
+        sketch.endShape();
       } else {
         sketch.stroke(255);
+        sketch.line(
+          this.pos.x,
+          this.pos.y,
+          this.parent.pos.x,
+          this.parent.pos.y
+        );
       }
-
-      sketch.line(this.pos.x, this.pos.y, this.parent.pos.x, this.parent.pos.y);
     }
   };
 
