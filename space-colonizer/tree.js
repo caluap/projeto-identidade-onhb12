@@ -1,7 +1,7 @@
 function Tree(x, y, sketch) {
   this.branches = [];
 
-  this.min_dist = 2;
+  this.min_dist = 5;
   this.max_dist = 100;
 
   var pos = sketch.createVector(x, y);
@@ -80,5 +80,9 @@ function Tree(x, y, sketch) {
     for (let i = 0; i < this.branches.length; i++) {
       this.branches[i].show(sketch);
     }
+  };
+
+  this.showRoot = function(sketch) {
+    this.branches[0].showRoot(sketch);
   };
 }

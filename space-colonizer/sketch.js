@@ -1,7 +1,7 @@
 var trees = [];
 var leaves = [];
 
-let r = 2;
+let r = 4;
 let w = 210 * r,
   h = 297 * r;
 
@@ -111,7 +111,11 @@ let regularSketch = new p5(sketch => {
   };
 
   sketch.draw = () => {
-    sketch.background("#cb0072");
+    if (rootMode) {
+      sketch.background("#009900");
+    } else {
+      sketch.background("#cb0072");
+    }
 
     if (showLeaves) {
       sketch.fill(255);
@@ -124,6 +128,8 @@ let regularSketch = new p5(sketch => {
       if (!trees[trees.length - 1].grow()) {
         toggleGrow();
       }
+    } else if (trees.length > 0) {
+      trees[trees.length - 1].showRoot(sketch);
     }
     for (let i = 0; i < trees.length; i++) {
       trees[i].show(sketch);
