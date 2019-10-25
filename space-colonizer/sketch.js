@@ -27,6 +27,8 @@ function saveSVG() {
 }
 
 let regularSketch = new p5(sketch => {
+  let sliderRadius, sliderDensity;
+
   let grow = false,
     showLeaves = true,
     rootMode = false;
@@ -38,8 +40,12 @@ let regularSketch = new p5(sketch => {
 
   sketch.mouseDragged = () => {
     if (!rootMode) {
-      for (let i = 0; i < 2; i++) {
-        let p = sketch.randomPoint(sketch.mouseX, sketch.mouseY, 10);
+      for (let i = 0; i < sliderDensity.value(); i++) {
+        let p = sketch.randomPoint(
+          sketch.mouseX,
+          sketch.mouseY,
+          sliderRadius.value()
+        );
         leaves.push(new Leaf(sketch, p));
       }
     }
@@ -93,6 +99,16 @@ let regularSketch = new p5(sketch => {
     });
 
     els.push(penModeButton);
+
+    els.push(sketch.createP(""));
+
+    sliderRadius = sketch.createSlider(5, 100, 20, 1);
+    els.push(sketch.createP("radius"));
+    els.push(sliderRadius);
+
+    els.push(sketch.createP("density"));
+    sliderDensity = sketch.createSlider(1, 40, 2, 1);
+    els.push(sliderDensity);
 
     els.push(sketch.createP(""));
 
