@@ -7,6 +7,8 @@ function Branch(parent, pos, dir, level = 0) {
   this.count = 0;
   this.len = 10;
 
+  this.isLastChild = true;
+
   this.reset = function() {
     this.dir = this.origDir.copy();
     this.count = 0;
@@ -17,6 +19,7 @@ function Branch(parent, pos, dir, level = 0) {
     var nextPos = p5.Vector.add(this.pos, nextDir);
     var newLevel = this.level + 0.2;
     var nextBranch = new Branch(this, nextPos, this.dir.copy(), newLevel);
+    this.isLastChild = false;
     return nextBranch;
   };
 
@@ -27,7 +30,13 @@ function Branch(parent, pos, dir, level = 0) {
       } else {
         sketch.strokeWeight(stroke);
       }
-      sketch.stroke(255);
+
+      if (this.isLastChild) {
+        sketch.stroke(0, 0, 255);
+      } else {
+        sketch.stroke(255);
+      }
+
       sketch.line(this.pos.x, this.pos.y, this.parent.pos.x, this.parent.pos.y);
     }
   };
