@@ -17,7 +17,7 @@ function saveSVG() {
       sketch.background("#cb0072");
       sketch.stroke(255);
       for (let i = 0; i < trees.length; i++) {
-        trees[i].show(sketch);
+        trees[i].show(sketch, parseInt(sliderStroke.value()));
       }
       sketch.noLoop();
       console.log("will save...");
