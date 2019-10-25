@@ -9,26 +9,6 @@ function Tree(x, y, sketch) {
   var root = new Branch(null, pos, dir);
 
   this.branches.push(root);
-
-  var current = root;
-  var found = false;
-
-  if (leaves.length > 0) {
-    while (!found) {
-      for (let i = 0; i < leaves.length; i++) {
-        var d = p5.Vector.dist(current.pos, leaves[i].pos);
-        if (d < this.max_dist) {
-          found = true;
-        }
-      }
-      if (!found) {
-        var branch = current.next();
-        current = branch;
-        this.branches.push(current);
-      }
-    }
-  }
-
   this.grow = function() {
     for (let i = 0; i < leaves.length; i++) {
       var leaf = leaves[i];
