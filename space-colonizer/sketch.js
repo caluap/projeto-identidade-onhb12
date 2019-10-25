@@ -6,7 +6,30 @@
 var trees = [];
 var leaves = [];
 
+let r = 2;
+let w = 210 * r,
+  h = 297 * r;
+
 let growButton, showLeavesButton, penModeButton;
+
+function saveSVG() {
+  let svgSketch = new p5(sketch => {
+    sketch.setup = () => {
+      let cnv = sketch.createCanvas(w, h, sketch.SVG);
+    };
+    sketch.draw = () => {
+      console.log("will draw...");
+      sketch.background("#cb0072");
+      sketch.stroke(255);
+      for (let i = 0; i < trees.length; i++) {
+        trees[i].show(sketch);
+      }
+      sketch.noLoop();
+      console.log("will save...");
+      sketch.save();
+    };
+  }, "hidden-canvas-container");
+}
 
 let regularSketch = new p5(sketch => {
   let grow = false,
@@ -36,18 +59,17 @@ let regularSketch = new p5(sketch => {
   };
 
   randomizeLeaves = () => {
-    for (var i = 0; i < 50; i++) {
+    for (let i = 0; i < 50; i++) {
       leaves.push(new Leaf(sketch));
     }
   };
 
   sketch.setup = () => {
-    let r = 2;
-    let cnv = sketch.createCanvas(210 * r, 297 * r);
+    let cnv = sketch.createCanvas(w, h);
 
     trees.push(new Tree(sketch.width / 2, sketch.height / 2, sketch));
 
-    sketch.createP();
+    sketch.createP("");
 
     growButton = sketch.createButton(`grow: ${grow}`).mousePressed(toggleGrow);
 
@@ -70,7 +92,7 @@ let regularSketch = new p5(sketch => {
       }
     });
 
-    sketch.createP();
+    sketch.createP("");
 
     sketch.createButton("clear leaves").mousePressed(() => {
       leaves = [];
@@ -80,10 +102,10 @@ let regularSketch = new p5(sketch => {
       trees = [];
     });
 
-    sketch.createP();
+    sketch.createP("");
 
     sketch.createButton("save").mousePressed(() => {
-      save("f.json");
+      saveSVG();
     });
 
     cnv.mouseClicked(() => {
@@ -99,7 +121,7 @@ let regularSketch = new p5(sketch => {
     if (showLeaves) {
       sketch.fill(255);
       sketch.noStroke();
-      for (var i = 0; i < leaves.length; i++) {
+      for (let i = 0; i < leaves.length; i++) {
         leaves[i].show(sketch);
       }
     }
@@ -108,7 +130,7 @@ let regularSketch = new p5(sketch => {
         toggleGrow();
       }
     }
-    for (i = 0; i < trees.length; i++) {
+    for (let i = 0; i < trees.length; i++) {
       trees[i].show(sketch);
     }
   };
