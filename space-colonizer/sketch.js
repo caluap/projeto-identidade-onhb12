@@ -27,7 +27,7 @@ function saveSVG() {
 }
 
 let regularSketch = new p5(sketch => {
-  let sliderRadius, sliderDensity;
+  let sliderRadius, sliderDensity, sliderStroke;
 
   let grow = false,
     showLeaves = true,
@@ -110,6 +110,10 @@ let regularSketch = new p5(sketch => {
     sliderDensity = sketch.createSlider(1, 40, 2, 1);
     els.push(sliderDensity);
 
+    els.push(sketch.createP("stroke"));
+    sliderStroke = sketch.createSlider(1, 6, 3, 0.5);
+    els.push(sliderStroke);
+
     els.push(sketch.createP(""));
 
     els.push(
@@ -170,7 +174,7 @@ let regularSketch = new p5(sketch => {
       trees[trees.length - 1].showRoot(sketch);
     }
     for (let i = 0; i < trees.length; i++) {
-      trees[i].show(sketch);
+      trees[i].show(sketch, parseInt(sliderStroke.value()));
     }
   };
 }, "regular-canvas-container");

@@ -20,9 +20,13 @@ function Branch(parent, pos, dir, level = 0) {
     return nextBranch;
   };
 
-  this.show = function(sketch) {
+  this.show = function(sketch, stroke = null) {
     if (parent != null) {
-      sketch.strokeWeight(Math.max(6 - Math.cbrt(this.level), 1));
+      if (stroke === null) {
+        sketch.strokeWeight(Math.max(6 - Math.cbrt(this.level), 1));
+      } else {
+        sketch.strokeWeight(stroke);
+      }
       sketch.stroke(255);
       sketch.line(this.pos.x, this.pos.y, this.parent.pos.x, this.parent.pos.y);
     }
