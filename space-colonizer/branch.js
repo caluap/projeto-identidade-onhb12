@@ -28,7 +28,9 @@ function Branch(parent, pos, dir, level = 0) {
       if (stroke === null) {
         sketch.strokeWeight(Math.max(6 - Math.cbrt(this.level), 1));
       } else {
-        sketch.strokeWeight(stroke);
+        let s = Math.max(stroke - Math.pow(this.level, 1 / 4), 1);
+        sketch.strokeWeight(s);
+        // sketch.strokeWeight(stroke);
       }
 
       if (this.isLastChild) {
