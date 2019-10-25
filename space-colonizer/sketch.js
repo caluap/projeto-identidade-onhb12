@@ -159,6 +159,16 @@ let regularSketch = new p5(sketch => {
     els.push(sketch.createP(""));
 
     els.push(
+      sketch.createButton("remove image").mousePressed(() => {
+        if (uploadedImage) {
+          uploadedImage = null;
+        }
+      })
+    );
+
+    els.push(sketch.createP(""));
+
+    els.push(
       sketch.createButton("save").mousePressed(() => {
         saveSVG(parseInt(sliderStroke.value()));
       })
