@@ -1,8 +1,3 @@
-// Coding Rainbow
-// Daniel Shiffman
-// http://patreon.com/codingtrain
-// Code for: https://youtu.be/kKT0v3qhIQY
-
 function Tree(x, y, sketch) {
   this.branches = [];
 

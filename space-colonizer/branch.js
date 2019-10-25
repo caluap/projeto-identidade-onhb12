@@ -1,8 +1,3 @@
-// Coding Rainbow
-// Daniel Shiffman
-// http://patreon.com/codingtrain
-// Code for: https://youtu.be/kKT0v3qhIQY
-
 function Branch(parent, pos, dir, level = 0) {
   this.pos = pos;
   this.level = level;
