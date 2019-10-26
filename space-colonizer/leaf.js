@@ -14,7 +14,7 @@ function Leaf(sketch, p = null) {
       p.y > -marginH &&
       p.y < sketch.height + marginH
     ) {
-      this.pos = sketch.createVector(p.x, p.y);
+      this.pos = p;
     } else {
       let nX = Math.min(Math.max(p.x, -marginW), sketch.width + marginW);
       let nY = Math.min(Math.max(p.y, -marginH), sketch.height + marginH);

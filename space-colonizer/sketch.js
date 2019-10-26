@@ -4,6 +4,8 @@ var leaves = [];
 let min_dist = 5,
   max_dist = 100;
 
+let pickedColor = null;
+
 let r = 4;
 let w = 210 * r,
   h = 297 * r;
@@ -49,10 +51,10 @@ let regularSketch = new p5(sketch => {
   sketch.keyPressed = () => {
     if (sketch.keyCode == 67 && uploadedImage) {
       let c = sketch.get(sketch.mouseX, sketch.mouseY);
-      console.log(`${sketch.mouseX}/${sketch.mouseY}/${c}`);
       document.getElementById("picked-color").style.backgroundColor = `rgb(${
         c[0]
       }, ${c[1]}, ${c[2]})`;
+      pickedColor = c;
     }
   };
 
@@ -61,16 +63,21 @@ let regularSketch = new p5(sketch => {
     growButton.elt.textContent = `grow: ${grow}`;
   };
 
+  addLeaves = (x, y, n, r) => {
+    for (let i = 0; i < n; i++) {
+      let p = sketch.randomPoint(x, y, r);
+      leaves.push(new Leaf(sketch, p));
+    }
+  };
+
   sketch.mouseDragged = () => {
     if (!rootMode) {
-      for (let i = 0; i < sliderDensity.value(); i++) {
-        let p = sketch.randomPoint(
-          sketch.mouseX,
-          sketch.mouseY,
-          sliderRadius.value()
-        );
-        leaves.push(new Leaf(sketch, p));
-      }
+      addLeaves(
+        sketch.mouseX,
+        sketch.mouseY,
+        sliderDensity.value(),
+        sliderRadius.value()
+      );
     }
   };
 
@@ -86,6 +93,61 @@ let regularSketch = new p5(sketch => {
     for (let i = 0; i < 50; i++) {
       leaves.push(new Leaf(sketch));
     }
+  };
+
+  getOff = (x, y, d) => {
+    return (y * sketch.width + x) * d * 4;
+  };
+
+  processImg = () => {
+    console.log("started processing image");
+    sketch.loadPixels();
+
+    let x = 0,
+      y = 0;
+
+    let density = sketch.pixelDensity();
+    let dx = 0,
+      dy = 0;
+
+    for (let off = 0; off < sketch.pixels.length; off += 4) {
+      let r = sketch.pixels[off + 0],
+        g = sketch.pixels[off + 1],
+        b = sketch.pixels[off + 2];
+      let labA = rgb2lab([r, g, b]);
+      let labB = rgb2lab([pickedColor[0], pickedColor[1], pickedColor[2]]);
+
+      // http://zschuessler.github.io/DeltaE/learn/
+      let diff = deltaE(labA, labB);
+      if (diff < 15) {
+        if (Math.random() < 1 / 200 / density) {
+          leaves.push(new Leaf(sketch, sketch.createVector(x, y)));
+          sketch.pixels[off + 0] = 0;
+          sketch.pixels[off + 1] = 255;
+          sketch.pixels[off + 2] = 0;
+        }
+      }
+
+      // density 2 means that each 4 pixels here are equal to
+      // one pixel when i create vectors, so below i account
+      // for that.
+      dx++;
+      if (dx >= density) {
+        dx = 0;
+        x++;
+        if (x >= sketch.width) {
+          x = 0;
+          dy++;
+          if (dy >= density) {
+            dy = 0;
+            y++;
+          }
+        }
+      }
+    }
+
+    console.log("ended processing image");
+    sketch.updatePixels();
   };
 
   sketch.setup = () => {
@@ -165,6 +227,16 @@ let regularSketch = new p5(sketch => {
     els.push(sketch.createP(""));
 
     els.push(sketch.createFileInput(handleUpload));
+
+    els.push(sketch.createP(""));
+
+    els.push(
+      sketch.createButton("process img").mousePressed(() => {
+        if (uploadedImage && pickedColor) {
+          processImg();
+        }
+      })
+    );
 
     els.push(sketch.createP(""));
 
