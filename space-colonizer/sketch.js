@@ -195,31 +195,52 @@ let regularSketch = new p5(sketch => {
 
     els.push(sketch.createP(""));
 
-    sliderRadius = sketch.createSlider(5, 200, 20, 1);
-    els.push(sketch.createP("radius"));
+    sliderRadius = sketch.createSlider(5, 200, 20, 1).input(() => {
+      document.getElementById(
+        "p-radius"
+      ).innerText = `brush radius: ${sliderRadius.value()}`;
+    });
+    els.push(
+      sketch.createP(`brush radius: ${sliderRadius.value()}`).id("p-radius")
+    );
     els.push(sliderRadius);
 
-    els.push(sketch.createP("density"));
-    sliderDensity = sketch.createSlider(1, 40, 2, 1);
+    sliderDensity = sketch.createSlider(1, 40, 2, 1).input(() => {
+      document.getElementById(
+        "p-density"
+      ).innerText = `brush density: ${sliderDensity.value()}`;
+    });
+    els.push(
+      sketch.createP(`brush density: ${sliderDensity.value()}`).id("p-density")
+    );
     els.push(sliderDensity);
 
-    els.push(sketch.createP("stroke"));
-    sliderStroke = sketch.createSlider(1, 6, 3, 0.5);
+    sliderStroke = sketch.createSlider(1, 6, 3, 0.5).input(() => {
+      document.getElementById(
+        "p-stroke"
+      ).innerText = `stroke: ${sliderStroke.value()}`;
+    });
+    els.push(sketch.createP(`stroke: ${sliderStroke.value()}`).id("p-stroke"));
     els.push(sliderStroke);
 
-    els.push(sketch.createP("min dist"));
-
-    sliderMinDist = sketch.createSlider(2, 10, 5, 1).input(() => {
-      min_dist = parseInt(sliderMinDist.value());
+    sliderMinDist = sketch.createSlider(2, 15, 5, 1).input(() => {
+      let v = sliderMinDist.value();
+      min_dist = parseInt(v);
+      document.getElementById("p-min-dist").innerText = `min dist: ${v}`;
     });
-
+    els.push(
+      sketch.createP(`min dist: ${sliderMinDist.value()}`).id("p-min-dist")
+    );
     els.push(sliderMinDist);
 
-    els.push(sketch.createP("max dist"));
-
-    sliderMaxDist = sketch.createSlider(10, 200, 70, 1).input(() => {
-      max_dist = parseInt(sliderMaxDist.value());
+    sliderMaxDist = sketch.createSlider(20, 200, 70, 1).input(() => {
+      let v = sliderMaxDist.value();
+      max_dist = v;
+      document.getElementById("p-max-dist").innerText = `max dist: ${v}`;
     });
+    els.push(
+      sketch.createP(`max dist: ${sliderMaxDist.value()}`).id("p-max-dist")
+    );
 
     els.push(sliderMaxDist);
 
