@@ -32,7 +32,7 @@ function saveSVG(strokeWeight) {
 }
 
 let regularSketch = new p5(sketch => {
-  let sliderRadius, sliderDensity, sliderStroke, sliderMinDist;
+  let sliderRadius, sliderDensity, sliderStroke, sliderMinDist, sliderMaxDist;
 
   let grow = false,
     showLeaves = true,
@@ -206,6 +206,14 @@ let regularSketch = new p5(sketch => {
     });
 
     els.push(sliderMinDist);
+
+    els.push(sketch.createP("max dist"));
+
+    sliderMaxDist = sketch.createSlider(10, 200, 70, 1).input(() => {
+      max_dist = parseInt(sliderMaxDist.value());
+    });
+
+    els.push(sliderMaxDist);
 
     els.push(sketch.createP(""));
 
