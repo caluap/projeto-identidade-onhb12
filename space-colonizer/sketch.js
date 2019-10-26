@@ -50,11 +50,19 @@ let regularSketch = new p5(sketch => {
 
   sketch.keyPressed = () => {
     if (sketch.keyCode == 67 && uploadedImage) {
-      let c = sketch.get(sketch.mouseX, sketch.mouseY);
+      sketch.loadPixels();
+      let d = sketch.pixelDensity();
+      let off = getOff(sketch.mouseX, sketch.mouseY, d);
+      let c = [
+        sketch.pixels[off + 0],
+        sketch.pixels[off + 1],
+        sketch.pixels[off + 2]
+      ];
       document.getElementById("picked-color").style.backgroundColor = `rgb(${
         c[0]
       }, ${c[1]}, ${c[2]})`;
       pickedColor = c;
+      sketch.updatePixels();
     }
   };
 
@@ -96,7 +104,7 @@ let regularSketch = new p5(sketch => {
   };
 
   getOff = (x, y, d) => {
-    return (y * sketch.width + x) * d * 4;
+    return (y * d * sketch.width + x) * d * 4;
   };
 
   processImg = () => {
