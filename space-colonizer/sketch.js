@@ -26,7 +26,16 @@ function saveSVG(strokeWeight) {
       }
       sketch.noLoop();
       console.log("will save...");
-      sketch.save();
+      let today = new Date();
+      let date =
+        today.getFullYear() +
+        "-" +
+        (today.getMonth() + 1) +
+        "-" +
+        today.getDate();
+      let time = today.getHours() + "-" + today.getMinutes();
+      let fileName = "space-colonizer-" + date + "--" + time + ".svg";
+      sketch.save(fileName);
     };
   }, "hidden-canvas-container");
 }
