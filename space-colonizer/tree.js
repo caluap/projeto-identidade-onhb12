@@ -55,7 +55,7 @@ function Tree(x, y, sketch) {
 
   this.show = function(sketch, stroke = null) {
     for (let i = 0; i < this.branches.length; i++) {
-      this.branches[i].show(sketch, stroke);
+      this.branches[i].show(sketch, stroke, false, i);
     }
   };
 

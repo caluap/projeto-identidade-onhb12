@@ -224,7 +224,7 @@ let regularSketch = new p5(sketch => {
     );
     els.push(sliderDensity);
 
-    sliderStroke = sketch.createSlider(1, 6, 3, 0.5).input(() => {
+    sliderStroke = sketch.createSlider(1, 6, 2.5, 0.5).input(() => {
       document.getElementById(
         "p-stroke"
       ).innerText = `stroke: ${sliderStroke.value()}`;
