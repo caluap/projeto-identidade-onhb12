@@ -17,10 +17,17 @@ function Branch(parent, pos, dir, level = 0) {
   this.next = function() {
     var nextDir = p5.Vector.mult(this.dir, this.len);
     var nextPos = p5.Vector.add(this.pos, nextDir);
-    var newLevel = this.level + 0.2;
-    var nextBranch = new Branch(this, nextPos, this.dir.copy(), newLevel);
-    this.isLastChild = false;
-    return nextBranch;
+
+    // only creates new branch if its far enough from current
+    let dist = p5.Vector.dist(nextPos, this.pos);
+    if (dist >= this.len / 4) {
+      var newLevel = this.level + 1;
+      var nextBranch = new Branch(this, nextPos, this.dir.copy(), newLevel);
+      this.isLastChild = false;
+      return nextBranch;
+    } else {
+      return null;
+    }
   };
 
   this.drawLeaf = function(sketch) {

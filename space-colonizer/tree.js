@@ -46,7 +46,10 @@ function Tree(x, y, sketch) {
       var branch = this.branches[i];
       if (branch.count > 0) {
         branch.dir.div(branch.count + 1);
-        this.branches.push(branch.next());
+        let newBranch = branch.next();
+        if (newBranch != null) {
+          this.branches.push(branch.next());
+        }
         branch.reset();
       }
     }
