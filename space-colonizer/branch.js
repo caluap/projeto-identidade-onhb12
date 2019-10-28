@@ -83,8 +83,8 @@ function Branch(parent, pos, dir, level = 0) {
   };
 
   this.drawFlower = function(sketch) {
-    let flowerRad = 3;
-    let petalRad = 6;
+    let flowerRad = 2;
+    let petalRad = 5;
     let nPetals = 5;
 
     sketch.push();
@@ -101,7 +101,7 @@ function Branch(parent, pos, dir, level = 0) {
   };
 
   this.show = function(sketch, stroke = null, thinningStroke = false, i = 0) {
-    let rateOfFlowering = 19;
+    let rateOfFlowering = 131;
     if (parent != null) {
       if (stroke === null) {
         sketch.strokeWeight(Math.max(3 - Math.cbrt(this.level), 1));
