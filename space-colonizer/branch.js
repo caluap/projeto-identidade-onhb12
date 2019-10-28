@@ -20,7 +20,7 @@ function Branch(parent, pos, dir, level = 0) {
 
     // only creates new branch if its far enough from current
     let dist = p5.Vector.dist(nextPos, this.pos);
-    if (dist >= this.len / 4) {
+    if (dist >= this.len / 4 || this.parent == null) {
       var newLevel = this.level + 1;
       var nextBranch = new Branch(this, nextPos, this.dir.copy(), newLevel);
       this.isLastChild = false;
