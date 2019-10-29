@@ -1,5 +1,5 @@
 let r = 2;
-let debug = true;
+let debug = false;
 let w = 210 * r,
   h = 297 * r;
 
@@ -51,7 +51,7 @@ function saveSVG(strokeWeight) {
 let regularSketch = new p5(sketch => {
   let sentence = "";
   let lSystem = [];
-  let ruleI = 0;
+  let ruleI = 3;
 
   sketch.setup = () => {
     let cnv = sketch.createCanvas(w, h);
@@ -114,19 +114,45 @@ let regularSketch = new p5(sketch => {
     });
   };
 
-  turtle = (currentSentence, lenMult = 1, angle = 0.138 * Math.PI) => {
-    let basisLen = 10;
+  gradientLine = (len, c1, c2) => {
+    sketch.stroke(c1);
+    for (let i = 0; i < len; i += 0.1) {
+      sketch.stroke(
+        sketch.lerpColor(sketch.color(c1), sketch.color(c2), i / len)
+      );
+      sketch.point(0, -i);
+    }
+  };
 
+  turtle = (currentSentence, lenMult = 1, angle = 0.138 * Math.PI) => {
+    let basisLen = 9;
     let len = basisLen * lenMult;
+
+    let level = 0;
+    let strokes = [5, 1, 0.5];
+    let colors = [
+      sketch.color(0, 0, 0),
+      sketch.color(50, 50, 50),
+      sketch.color(0, 255, 128),
+      sketch.color(0, 255, 0)
+    ];
 
     sketch.resetMatrix();
     sketch.translate(sketch.width / 2, sketch.height);
-    sketch.stroke(255);
     for (let i = 0; i < currentSentence.length; i++) {
       let currChar = currentSentence.charAt(i);
+
       switch (currChar) {
         case "F":
-          sketch.line(0, 0, 0, -len);
+          // sketch.line(0, 0, 0, -len);
+          let c1 = Math.min(Math.max(level - 1, 0), colors.length - 1);
+          c2 = Math.min(level, colors.length - 1);
+          if (level >= strokes.length) {
+            sketch.strokeWeight(strokes[strokes.length - 1]);
+          } else {
+            sketch.strokeWeight(strokes[level]);
+          }
+          gradientLine(len, colors[c1], colors[c2]);
           sketch.translate(0, -len);
           break;
         case "+":
@@ -136,9 +162,11 @@ let regularSketch = new p5(sketch => {
           sketch.rotate(+angle);
           break;
         case "[":
+          level++;
           sketch.push();
           break;
         case "]":
+          level--;
           sketch.pop();
           break;
       }
