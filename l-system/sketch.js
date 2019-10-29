@@ -46,18 +46,25 @@ function saveSVG(strokeWeight) {
 }
 
 let regularSketch = new p5(sketch => {
-  let axiom = "F";
+  let axiom = "X";
   let sentence = axiom;
-  let rules = [];
+  let rules = {};
 
   sketch.setup = () => {
     let cnv = sketch.createCanvas(w, h);
-    rules.push({
-      a: "F",
-      b: "FF+[+F-F-F]-[-F+F+F]"
-    });
+    rules["barnsley_fern"] = [
+      {
+        a: "F",
+        b: "FF"
+      },
+      {
+        a: "X",
+        b: "F+[[X]-X]-F[-FX]+X"
+      }
+    ];
 
     this.createInterface();
+    sketch.noLoop();
   };
 
   createInterface = () => {
@@ -65,10 +72,11 @@ let regularSketch = new p5(sketch => {
 
     els.push(
       sketch.createButton("run").mousePressed(() => {
-        sentence = processSentence(sentence, rules);
+        sentence = processSentence(sentence, rules.barnsley_fern);
         if (debug) {
           console.log(`currently, the sentence is \n${sentence}`);
         }
+        sketch.redraw();
       })
     );
 
@@ -78,7 +86,7 @@ let regularSketch = new p5(sketch => {
     });
   };
 
-  turtle = (currentSentence, len = 100) => {
+  turtle = (currentSentence, len = 5, angle = -0.138 * Math.PI) => {
     sketch.resetMatrix();
     sketch.translate(sketch.width / 2, sketch.height);
     sketch.stroke(255);
@@ -90,10 +98,10 @@ let regularSketch = new p5(sketch => {
           sketch.translate(0, -len);
           break;
         case "+":
-          sketch.rotate(sketch.PI / 6);
+          sketch.rotate(angle);
           break;
         case "-":
-          sketch.rotate(-sketch.PI / 6);
+          sketch.rotate(-angle);
           break;
         case "[":
           sketch.push();
