@@ -1,9 +1,9 @@
 let r = 2;
-let debug = false;
+let debug = true;
 let w = 210 * r,
   h = 297 * r;
 
-function processSentence(currentSentence, rules, axiom) {
+function processSentence(currentSentence, rules, axiom = "X") {
   if (currentSentence == "") {
     currentSentence = axiom;
   }
@@ -49,21 +49,29 @@ function saveSVG(strokeWeight) {
 }
 
 let regularSketch = new p5(sketch => {
-  let sentence = "";
+  let sentences = [];
   let lSystem = [];
-  let ruleI = 3;
+  let ruleI = 0;
 
   sketch.setup = () => {
     let cnv = sketch.createCanvas(w, h);
+    sketch.noLoop();
+
     lSystem.push({
       angle: Math.PI / 7,
-      lenMult: 1,
+      lenMult: 0.6,
+      iterations: 4,
+      strokes: [2, 1, 1, 2],
+      colors: null,
       axiom: "F",
       rules: [{ a: "F", b: "F[+F]F[-F]F" }]
     });
     lSystem.push({
       angle: sketch.radians(25),
-      lenMult: 1,
+      lenMult: 0.8,
+      iterations: 5,
+      strokes: [9, 6, 3, 1, 0.5],
+      colors: ["#555", "#666", "#bbb", "#fff"],
       axiom: "X",
       rules: [
         { a: "F", b: "FF" },
@@ -72,13 +80,19 @@ let regularSketch = new p5(sketch => {
     });
     lSystem.push({
       angle: Math.PI / 9,
-      lenMult: 1,
+      lenMult: 0.2,
+      iterations: 7,
+      strokes: [5, 1],
+      colors: null,
       axiom: "X",
       rules: [{ a: "F", b: "FF" }, { a: "X", b: "F[+X]F[-X]+X" }]
     });
     lSystem.push({
       angle: sketch.radians(20),
-      lenMult: 1,
+      lenMult: 1.2,
+      iterations: 4,
+      strokes: [5, 2, 2, 1],
+      colors: null,
       axiom: "X",
       rules: [
         { a: "F", b: "FX[FX[+XF]]" },
@@ -87,22 +101,22 @@ let regularSketch = new p5(sketch => {
       ]
     });
 
-    this.createInterface();
-    sketch.noLoop();
+    createInterface();
+    createSentences();
   };
 
   createInterface = () => {
     let els = [];
 
     els.push(
-      sketch.createButton("run").mousePressed(() => {
-        sentence = processSentence(
-          sentence,
-          lSystem[ruleI].rules,
-          lSystem[ruleI].axiom
-        );
+      sketch.createButton("run").mouseClicked(() => {
+        if (ruleI == lSystem.length - 1) {
+          ruleI = 0;
+        } else {
+          ruleI++;
+        }
         if (debug) {
-          console.log(`currently, the sentence is \n${sentence}`);
+          console.log(`will draw l-system: ${ruleI}`);
         }
         sketch.redraw();
       })
@@ -112,6 +126,15 @@ let regularSketch = new p5(sketch => {
     els.forEach(el => {
       el.parent(parentEl);
     });
+  };
+
+  createSentences = () => {
+    for (let i = 0; i < lSystem.length; i++) {
+      sentences.push(lSystem[i].axiom);
+      for (let j = 0; j < lSystem[i].iterations; j++) {
+        sentences[i] = processSentence(sentences[i], lSystem[i].rules);
+      }
+    }
   };
 
   gradientLine = (len, c1, c2) => {
@@ -124,18 +147,23 @@ let regularSketch = new p5(sketch => {
     }
   };
 
-  turtle = (currentSentence, lenMult = 1, angle = 0.138 * Math.PI) => {
+  turtle = (
+    currentSentence,
+    lenMult = 1,
+    angle = Math.PI / 7,
+    strokes = null,
+    colors = null
+  ) => {
     let basisLen = 9;
     let len = basisLen * lenMult;
 
     let level = 0;
-    let strokes = [5, 1, 0.5];
-    let colors = [
-      sketch.color(0, 0, 0),
-      sketch.color(50, 50, 50),
-      sketch.color(0, 255, 128),
-      sketch.color(0, 255, 0)
-    ];
+    if (!strokes) {
+      strokes = [4, 2, 1, 1, 0.5];
+    }
+    if (!colors) {
+      colors = ["#555", "#999", "#ddd", "#eee"];
+    }
 
     sketch.resetMatrix();
     sketch.translate(sketch.width / 2, sketch.height);
@@ -144,15 +172,17 @@ let regularSketch = new p5(sketch => {
 
       switch (currChar) {
         case "F":
-          // sketch.line(0, 0, 0, -len);
-          let c1 = Math.min(Math.max(level - 1, 0), colors.length - 1);
-          c2 = Math.min(level, colors.length - 1);
           if (level >= strokes.length) {
             sketch.strokeWeight(strokes[strokes.length - 1]);
           } else {
             sketch.strokeWeight(strokes[level]);
           }
-          gradientLine(len, colors[c1], colors[c2]);
+          if (level >= colors.length) {
+            sketch.stroke(colors[colors.length - 1]);
+          } else {
+            sketch.stroke(colors[level]);
+          }
+          sketch.line(0, 0, 0, -len);
           sketch.translate(0, -len);
           break;
         case "+":
@@ -175,6 +205,12 @@ let regularSketch = new p5(sketch => {
 
   sketch.draw = () => {
     sketch.background(51);
-    turtle(sentence, lSystem[ruleI].lenMult, lSystem[ruleI].angle);
+    turtle(
+      sentences[ruleI],
+      lSystem[ruleI].lenMult,
+      lSystem[ruleI].angle,
+      lSystem[ruleI].strokes,
+      lSystem[ruleI].colors
+    );
   };
 }, "regular-canvas-container");
