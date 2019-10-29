@@ -1,4 +1,5 @@
-let r = 2;
+let r = 4;
+let nTrees = 100;
 let debug = true;
 let w = 210 * r,
   h = 297 * r;
@@ -51,7 +52,6 @@ function saveSVG(strokeWeight) {
 let regularSketch = new p5(sketch => {
   let sentences = [];
   let lSystem = [];
-  let ruleI = 0;
 
   sketch.setup = () => {
     let cnv = sketch.createCanvas(w, h);
@@ -70,12 +70,24 @@ let regularSketch = new p5(sketch => {
       angle: sketch.radians(25),
       lenMult: 0.8,
       iterations: 5,
-      strokes: [9, 6, 3, 1, 0.5],
-      colors: ["#555", "#666", "#bbb", "#fff"],
+      strokes: [9, 6, 3, 1, 1],
+      colors: ["#555", "#666", "#bbb", "#ddd"],
       axiom: "X",
       rules: [
         { a: "F", b: "FF" },
         { a: "X", b: "F+[-F-XF-X][+FF][--XF[+X]][++F-X]" }
+      ]
+    });
+    lSystem.push({
+      angle: sketch.radians(25),
+      lenMult: 0.4,
+      iterations: 6,
+      strokes: [9, 6, 3, 1, 1, 0.5],
+      colors: ["#555", "#666", "#bbb", "#eee"],
+      axiom: "X",
+      rules: [
+        { a: "F", b: "FF" },
+        { a: "X", b: "F+[-F-XF-X][+F--F][--XF[+X]][++F-X]" }
       ]
     });
     lSystem.push({
@@ -92,7 +104,7 @@ let regularSketch = new p5(sketch => {
       lenMult: 1.2,
       iterations: 4,
       strokes: [5, 2, 2, 1],
-      colors: null,
+      colors: ["#555", "#666", "#aaa", "#ccc"],
       axiom: "X",
       rules: [
         { a: "F", b: "FX[FX[+XF]]" },
@@ -110,14 +122,6 @@ let regularSketch = new p5(sketch => {
 
     els.push(
       sketch.createButton("run").mouseClicked(() => {
-        if (ruleI == lSystem.length - 1) {
-          ruleI = 0;
-        } else {
-          ruleI++;
-        }
-        if (debug) {
-          console.log(`will draw l-system: ${ruleI}`);
-        }
         sketch.redraw();
       })
     );
@@ -147,49 +151,60 @@ let regularSketch = new p5(sketch => {
     }
   };
 
-  turtle = (
-    currentSentence,
-    lenMult = 1,
-    angle = Math.PI / 7,
-    strokes = null,
-    colors = null
-  ) => {
-    let basisLen = 9;
-    let len = basisLen * lenMult;
+  jit = (v, original = 0.6, rand = 0.4) => {
+    return v * (Math.random() * rand + original);
+  };
 
+  turtle = (currentSentence, lSystem, scaling = 1 / 2, tint = null) => {
+    let dir = Math.random() > 0.5 ? -1 : 1;
+    let baseLen = 9;
+    let len = jit(baseLen * lSystem.lenMult * scaling);
+    let strokes, colors;
     let level = 0;
-    if (!strokes) {
+
+    if (!lSystem.strokes) {
       strokes = [4, 2, 1, 1, 0.5];
+    } else {
+      strokes = lSystem.strokes;
     }
-    if (!colors) {
+    if (!lSystem.colors) {
       colors = ["#555", "#999", "#ddd", "#eee"];
+    } else {
+      colors = lSystem.colors;
     }
 
-    sketch.resetMatrix();
-    sketch.translate(sketch.width / 2, sketch.height);
     for (let i = 0; i < currentSentence.length; i++) {
       let currChar = currentSentence.charAt(i);
 
       switch (currChar) {
         case "F":
           if (level >= strokes.length) {
-            sketch.strokeWeight(strokes[strokes.length - 1]);
+            sketch.strokeWeight(scaling * strokes[strokes.length - 1]);
           } else {
-            sketch.strokeWeight(strokes[level]);
+            sketch.strokeWeight(scaling * strokes[level]);
           }
+
+          let c;
           if (level >= colors.length) {
-            sketch.stroke(colors[colors.length - 1]);
+            c = sketch.color(colors[colors.length - 1]);
           } else {
-            sketch.stroke(colors[level]);
+            c = sketch.color(colors[level]);
           }
-          sketch.line(0, 0, 0, -len);
-          sketch.translate(0, -len);
+          if (tint) {
+            c = sketch.lerpColor(c, tint, 0.8);
+          }
+          sketch.stroke(c);
+
+          let randLen = jit(len);
+
+          sketch.line(0, 0, 0, -randLen);
+          sketch.translate(0, -randLen);
           break;
         case "+":
-          sketch.rotate(-angle);
+          sketch.rotate(dir * jit(lSystem.angle));
           break;
         case "-":
-          sketch.rotate(+angle);
+          sketch.rotate(-dir * jit(lSystem.angle));
           break;
         case "[":
           level++;
@@ -204,13 +219,53 @@ let regularSketch = new p5(sketch => {
   };
 
   sketch.draw = () => {
-    sketch.background(51);
-    turtle(
-      sentences[ruleI],
-      lSystem[ruleI].lenMult,
-      lSystem[ruleI].angle,
-      lSystem[ruleI].strokes,
-      lSystem[ruleI].colors
-    );
+    let yOff = sketch.height * 0.15;
+
+    // random positions
+    let coords = [];
+    for (let i = 0; i < nTrees; i++) {
+      let x = Math.random() * sketch.width;
+      let y = Math.random() * sketch.height + yOff;
+      coords.push({ x: x, y: y });
+    }
+
+    coords.sort((a, b) => {
+      return a.y - b.y;
+    });
+
+    sketch.background(0);
+    sketch.noStroke();
+    sketch.fill(0, 0, 200);
+    sketch.rect(0, 0, sketch.width, yOff / 2);
+    sketch.noFill();
+
+    for (let i = 0; i < nTrees; i++) {
+      if (i % 10 == 0 && debug) {
+        console.log(`tree nº${i}`);
+      }
+
+      sketch.translate(coords[i].x, coords[i].y);
+
+      // chooses tree
+      let tree = Math.round(Math.random() * (lSystem.length - 1));
+
+      // some perspective
+      let pY = (coords[i].y - yOff) / sketch.height;
+      let scaling = (2 / 3) * (1 / 3 + (2 / 3) * pY);
+
+      turtle(
+        sentences[tree],
+        lSystem[tree],
+        scaling,
+        sketch.lerpColor(sketch.color("#7f0047"), sketch.color("#cb0072"), pY)
+      );
+
+      sketch.resetMatrix();
+
+      sketch.noStroke();
+      sketch.fill(0, 5);
+      sketch.rect(0, 0, sketch.width, sketch.height);
+      sketch.noFill();
+    }
   };
 }, "regular-canvas-container");
