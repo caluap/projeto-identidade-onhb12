@@ -48,20 +48,24 @@ function saveSVG(strokeWeight) {
 let regularSketch = new p5(sketch => {
   let axiom = "X";
   let sentence = axiom;
-  let rules = {};
+  let lSystem = {};
 
   sketch.setup = () => {
     let cnv = sketch.createCanvas(w, h);
-    rules["barnsley_fern"] = [
-      {
-        a: "F",
-        b: "FF"
-      },
-      {
-        a: "X",
-        b: "F+[[X]-X]-F[-FX]+X"
-      }
-    ];
+    lSystem["barnsley_fern"] = {
+      angle: (5 / 36) * Math.PI,
+      lenMult: 1,
+      rules: [
+        {
+          a: "F",
+          b: "FF"
+        },
+        {
+          a: "X",
+          b: "F+[[X]-X]-F[-FX]+X"
+        }
+      ]
+    };
 
     this.createInterface();
     sketch.noLoop();
@@ -72,7 +76,7 @@ let regularSketch = new p5(sketch => {
 
     els.push(
       sketch.createButton("run").mousePressed(() => {
-        sentence = processSentence(sentence, rules.barnsley_fern);
+        sentence = processSentence(sentence, lSystem.barnsley_fern.rules);
         if (debug) {
           console.log(`currently, the sentence is \n${sentence}`);
         }
@@ -86,7 +90,11 @@ let regularSketch = new p5(sketch => {
     });
   };
 
-  turtle = (currentSentence, len = 5, angle = -0.138 * Math.PI) => {
+  turtle = (currentSentence, lenMult = 1, angle = 0.138 * Math.PI) => {
+    let basisLen = 10;
+
+    let len = basisLen * lenMult;
+
     sketch.resetMatrix();
     sketch.translate(sketch.width / 2, sketch.height);
     sketch.stroke(255);
@@ -98,10 +106,10 @@ let regularSketch = new p5(sketch => {
           sketch.translate(0, -len);
           break;
         case "+":
-          sketch.rotate(angle);
+          sketch.rotate(-angle);
           break;
         case "-":
-          sketch.rotate(-angle);
+          sketch.rotate(+angle);
           break;
         case "[":
           sketch.push();
@@ -115,6 +123,10 @@ let regularSketch = new p5(sketch => {
 
   sketch.draw = () => {
     sketch.background(51);
-    turtle(sentence);
+    turtle(
+      sentence,
+      lSystem.barnsley_fern.lenMult,
+      lSystem.barnsley_fern.angle
+    );
   };
 }, "regular-canvas-container");
