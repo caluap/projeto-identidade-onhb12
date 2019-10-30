@@ -1,6 +1,8 @@
 let debug = true;
 
-let nTrees = 666;
+let bg = 0;
+
+let nTrees = 66;
 let lSystem = [];
 let sentences = [];
 
@@ -61,11 +63,14 @@ function createCoordinates(sketch) {
 }
 
 function genericDraw(sketch, resMult = 1) {
-  sketch.background(0);
+  sketch.background(bg);
   sketch.noStroke();
   sketch.fill("#cb0072");
   sketch.rect(0, 0, sketch.width, yOff * sketch.height);
   sketch.noFill();
+
+  // this will make the veil appear around 66 times (or nTrees, if lower than 100)
+  let div = Math.min(1, Math.round(nTrees / 66));
 
   let firstY = coords[0].y;
   let lastY = coords[coords.length - 1].y;
@@ -84,19 +89,25 @@ function genericDraw(sketch, resMult = 1) {
     let pY = (coords[i].y - firstY) / (lastY - firstY);
     let scaling = resMult * (3 / 5) * (pY + 0.1);
 
+    let mixedOriginColor = sketch.lerpColor(
+      sketch.color("#a1005a"),
+      sketch.color(bg),
+      0.5
+    );
+
     turtle(
       sketch,
       sentences[tree],
       lSystem[tree],
       scaling,
-      sketch.lerpColor(sketch.color("#a1005a"), sketch.color("#cb0072"), pY)
+      sketch.lerpColor(mixedOriginColor, sketch.color("#cb0072"), pY)
     );
 
     sketch.resetMatrix();
 
-    if (i % 11 == 0) {
+    if (i % div == 0) {
       sketch.noStroke();
-      sketch.fill(0, 13);
+      sketch.fill(bg, 13);
       // sketch.fill(203, 0, 114, 1);
       sketch.rect(0, 0, sketch.width, sketch.height);
       sketch.noFill();
@@ -147,7 +158,7 @@ function turtle(
 
           let c;
           if (j == 0) {
-            c = sketch.color(0, 12);
+            c = sketch.color(bg, 12);
           } else {
             if (level >= colors.length) {
               c = sketch.color(colors[colors.length - 1]);
