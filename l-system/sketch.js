@@ -60,7 +60,8 @@ function createCoordinates(sketch) {
 
     // i don't use a simple random to increase the chance of trees on lower y values
     let y =
-      Math.random() * Math.random() * Math.random() * sketch.height +
+      Math.pow(Math.random() * Math.random() * Math.random(), 7 / 8) *
+        sketch.height +
       yOff * sketch.height;
     coords.push({ x: x, y: y });
   }
@@ -101,9 +102,17 @@ function genericDraw(sketch, resMult = 1) {
   let baseFontSize = 200;
   sketch.textSize(baseFontSize * resMult);
 
+  let cAlpha = 255 * 0.9;
+
+  let mixedOriginColor = sketch.lerpColor(
+    sketch.color(161, 0, 90, cAlpha),
+    sketch.color(bg, cAlpha),
+    0.5
+  );
+
   sketch.background(bg);
   sketch.noStroke();
-  sketch.fill("#cb0072");
+  sketch.fill(mixedOriginColor);
   sketch.rect(0, 0, sketch.width, yOff * sketch.height);
   sketch.noFill();
 
@@ -153,12 +162,6 @@ function genericDraw(sketch, resMult = 1) {
     let pY = (coords[i].y - firstY) / (lastY - firstY);
     let scaling = resMult * (3 / 5) * (pY + 0.1);
 
-    let mixedOriginColor = sketch.lerpColor(
-      sketch.color("#a1005a"),
-      sketch.color(bg),
-      0.5
-    );
-
     if (debugPos) {
       sketch.strokeWeight(1);
       sketch.fill(255);
@@ -171,14 +174,14 @@ function genericDraw(sketch, resMult = 1) {
       sentences[tree],
       lSystem[tree],
       scaling,
-      sketch.lerpColor(mixedOriginColor, sketch.color("#cb0072"), pY)
+      sketch.lerpColor(mixedOriginColor, sketch.color(203, 0, 114, cAlpha), pY)
     );
 
     sketch.resetMatrix();
 
     if (i % div == 0) {
       sketch.noStroke();
-      sketch.fill(bg, Math.ceil(Math.max(1, 255 / 2 / nVeils)));
+      sketch.fill(bg, Math.ceil(Math.max(1, (255 * 3) / 5 / nVeils)));
       // sketch.fill(203, 0, 114, 1);
       sketch.rect(0, 0, sketch.width, sketch.height);
       sketch.noFill();
@@ -214,7 +217,7 @@ function turtle(
     colors = lSystem.colors;
   }
 
-  let mult = 7;
+  let mult = 4;
   for (let j = 0; j < 2; j++) {
     sketch.push();
     for (let i = 0; i < currentSentence.length; i++) {
@@ -230,7 +233,7 @@ function turtle(
 
           let c;
           if (j == 0) {
-            c = sketch.color(bg, 12);
+            c = sketch.color(bg, 255 * 0.1);
           } else {
             if (level >= colors.length) {
               c = sketch.color(colors[colors.length - 1]);
