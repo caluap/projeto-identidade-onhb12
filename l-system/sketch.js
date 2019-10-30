@@ -6,6 +6,8 @@ let nTrees = 66;
 let lSystem = [];
 let sentences = [];
 
+let cooper;
+
 let trees = [];
 
 let coords = [];
@@ -227,6 +229,9 @@ function savePNG() {
 }
 
 let regularSketch = new p5(sketch => {
+  sketch.preload = () => {
+    cooper = sketch.loadFont("../assets/CooperHewitt-Medium.otf");
+  };
   sketch.setup = () => {
     let cnv = sketch.createCanvas(w, h);
     sketch.noLoop();
