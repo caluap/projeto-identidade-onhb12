@@ -40,12 +40,14 @@ function processSentence(currentSentence, rules, axiom = "X") {
 }
 
 function selectTrees() {
+  trees = [];
   for (let i = 0; i < nTrees; i++) {
     trees.push(Math.round(Math.random() * (lSystem.length - 1)));
   }
 }
 
 function createCoordinates(sketch) {
+  coords = [];
   // random positions
   for (let i = 0; i < nTrees; i++) {
     let x = Math.random() * sketch.width * (1 + xOff * 2) - xOff * sketch.width;
@@ -296,6 +298,9 @@ let regularSketch = new p5(sketch => {
 
     els.push(
       sketch.createButton("rerun").mouseClicked(() => {
+        createSentences();
+        selectTrees();
+        createCoordinates(sketch);
         sketch.redraw();
       })
     );
@@ -313,6 +318,7 @@ let regularSketch = new p5(sketch => {
   };
 
   createSentences = () => {
+    sentences = [];
     for (let i = 0; i < lSystem.length; i++) {
       sentences.push(lSystem[i].axiom);
       for (let j = 0; j < lSystem[i].iterations; j++) {
