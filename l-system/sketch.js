@@ -1,5 +1,5 @@
 let r = 4;
-let nTrees = 100;
+let nTrees = 400;
 let debug = true;
 let w = 210 * r,
   h = 297 * r;
@@ -71,7 +71,7 @@ let regularSketch = new p5(sketch => {
       lenMult: 0.8,
       iterations: 5,
       strokes: [9, 6, 3, 1, 1],
-      colors: ["#555", "#666", "#bbb", "#ddd"],
+      colors: null,
       axiom: "X",
       rules: [
         { a: "F", b: "FF" },
@@ -83,7 +83,7 @@ let regularSketch = new p5(sketch => {
       lenMult: 0.4,
       iterations: 6,
       strokes: [9, 6, 3, 1, 1, 0.5],
-      colors: ["#555", "#666", "#bbb", "#eee"],
+      colors: null,
       axiom: "X",
       rules: [
         { a: "F", b: "FF" },
@@ -104,7 +104,7 @@ let regularSketch = new p5(sketch => {
       lenMult: 1.2,
       iterations: 4,
       strokes: [5, 2, 2, 1],
-      colors: ["#555", "#666", "#aaa", "#ccc"],
+      colors: null,
       axiom: "X",
       rules: [
         { a: "F", b: "FX[FX[+XF]]" },
@@ -168,7 +168,7 @@ let regularSketch = new p5(sketch => {
       strokes = lSystem.strokes;
     }
     if (!lSystem.colors) {
-      colors = ["#555", "#999", "#ddd", "#eee"];
+      colors = ["#fff"];
     } else {
       colors = lSystem.colors;
     }
@@ -219,13 +219,16 @@ let regularSketch = new p5(sketch => {
   };
 
   sketch.draw = () => {
-    let yOff = sketch.height * 0.15;
+    let off = 0.05;
+    let yOff = sketch.height * 0.2;
 
     // random positions
     let coords = [];
     for (let i = 0; i < nTrees; i++) {
-      let x = Math.random() * sketch.width;
-      let y = Math.random() * sketch.height + yOff;
+      let x = Math.random() * sketch.width * (1 + off * 2) - off * sketch.width;
+
+      // i don't use a simple random to increase the chance of trees on lower y values
+      let y = Math.random() * Math.random() * sketch.height + yOff;
       coords.push({ x: x, y: y });
     }
 
@@ -235,8 +238,8 @@ let regularSketch = new p5(sketch => {
 
     sketch.background(0);
     sketch.noStroke();
-    sketch.fill(0, 0, 200);
-    sketch.rect(0, 0, sketch.width, yOff / 2);
+    sketch.fill("#cb0072");
+    sketch.rect(0, 0, sketch.width, yOff);
     sketch.noFill();
 
     for (let i = 0; i < nTrees; i++) {
@@ -251,21 +254,25 @@ let regularSketch = new p5(sketch => {
 
       // some perspective
       let pY = (coords[i].y - yOff) / sketch.height;
-      let scaling = (2 / 3) * (1 / 3 + (2 / 3) * pY);
+      let scaling = (3 / 5) * (pY + 0.1);
 
       turtle(
         sentences[tree],
         lSystem[tree],
         scaling,
-        sketch.lerpColor(sketch.color("#7f0047"), sketch.color("#cb0072"), pY)
+        sketch.lerpColor(sketch.color("#a1005a"), sketch.color("#cb0072"), pY)
       );
 
       sketch.resetMatrix();
 
-      sketch.noStroke();
-      sketch.fill(0, 5);
-      sketch.rect(0, 0, sketch.width, sketch.height);
-      sketch.noFill();
+      if (i % 13 == 0) {
+        sketch.noStroke();
+        sketch.fill(0, 13);
+        // sketch.fill(203, 0, 114, 1);
+        sketch.rect(0, 0, sketch.width, sketch.height);
+        sketch.noFill();
+      }
     }
+    console.log(coords);
   };
 }, "regular-canvas-container");
