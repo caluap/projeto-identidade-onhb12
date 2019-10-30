@@ -4,7 +4,7 @@ let debugPos = false;
 let bg = 0;
 
 let typeCoords = [];
-let text = "ONHB12";
+let text = "ONHB";
 
 let nTrees = 400;
 let lSystem = [];
@@ -71,13 +71,14 @@ function createCoordinates(sketch) {
   typeCoords = [];
 
   let offX = 0.03;
+  let yMult = 1.3;
   let initTypeCords = [
-    { x: 0.11 - offX, y: 0.41 },
-    { x: 0.33 - offX, y: 0.47 },
-    { x: 0.55 - offX, y: 0.54 },
-    { x: 0.77 - offX, y: 0.59 },
-    { x: 0.11 - offX, y: 0.87 },
-    { x: 0.31 - offX, y: 0.87 }
+    { x: 0.11 - offX, y: 0.41 * yMult },
+    { x: 0.33 - offX, y: 0.47 * yMult },
+    { x: 0.55 - offX, y: 0.54 * yMult },
+    { x: 0.77 - offX, y: 0.59 * yMult },
+    { x: 0.11 - offX, y: 0.87 * yMult },
+    { x: 0.31 - offX, y: 0.87 * yMult }
   ];
 
   for (let i = 0; i < initTypeCords.length; i++) {
