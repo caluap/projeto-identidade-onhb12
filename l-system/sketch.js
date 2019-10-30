@@ -1,8 +1,15 @@
 let debug = true;
 
-let nTrees = 66;
+let nTrees = 666;
 let lSystem = [];
 let sentences = [];
+
+let trees = [];
+
+let coords = [];
+
+let xOff = 0.05,
+  yOff = 0.2;
 
 let r = 4;
 let w = 210 * r,
@@ -30,44 +37,52 @@ function processSentence(currentSentence, rules, axiom = "X") {
   return nextSentence;
 }
 
-function genericDraw(sketch) {
-  let off = 0.05;
-  let yOff = sketch.height * 0.2;
-
-  // random positions
-  let coords = [];
+function selectTrees() {
   for (let i = 0; i < nTrees; i++) {
-    let x = Math.random() * sketch.width * (1 + off * 2) - off * sketch.width;
+    trees.push(Math.round(Math.random() * (lSystem.length - 1)));
+  }
+}
+
+function createCoordinates(sketch) {
+  // random positions
+  for (let i = 0; i < nTrees; i++) {
+    let x = Math.random() * sketch.width * (1 + xOff * 2) - xOff * sketch.width;
 
     // i don't use a simple random to increase the chance of trees on lower y values
     let y =
-      Math.random() * Math.random() * Math.random() * sketch.height + yOff;
+      Math.random() * Math.random() * Math.random() * sketch.height +
+      yOff * sketch.height;
     coords.push({ x: x, y: y });
   }
 
   coords.sort((a, b) => {
     return a.y - b.y;
   });
+}
 
+function genericDraw(sketch, resMult = 1) {
   sketch.background(0);
   sketch.noStroke();
   sketch.fill("#cb0072");
-  sketch.rect(0, 0, sketch.width, yOff);
+  sketch.rect(0, 0, sketch.width, yOff * sketch.height);
   sketch.noFill();
+
+  let firstY = coords[0].y;
+  let lastY = coords[coords.length - 1].y;
 
   for (let i = 0; i < nTrees; i++) {
     if (i % 10 == 0 && debug) {
       console.log(`tree nº${i}`);
     }
 
-    sketch.translate(coords[i].x, coords[i].y);
+    sketch.translate(coords[i].x * resMult, coords[i].y * resMult);
 
     // chooses tree
-    let tree = Math.round(Math.random() * (lSystem.length - 1));
+    let tree = trees[i];
 
     // some perspective
-    let pY = (coords[i].y - yOff) / sketch.height;
-    let scaling = (3 / 5) * (pY + 0.1);
+    let pY = (coords[i].y - firstY) / (lastY - firstY);
+    let scaling = resMult * (3 / 5) * (pY + 0.1);
 
     turtle(
       sketch,
@@ -174,12 +189,13 @@ function turtle(
 
 function savePNG() {
   let pngSketch = new p5(sketch => {
+    let resMult = Math.round(300 / 72);
     sketch.setup = () => {
-      let cnv = sketch.createCanvas(w, h);
+      let cnv = sketch.createCanvas(w * resMult, h * resMult);
     };
     sketch.draw = () => {
       console.log("will draw...");
-      genericDraw(sketch);
+      genericDraw(sketch, resMult);
 
       sketch.noLoop();
       let today = new Date();
@@ -260,6 +276,8 @@ let regularSketch = new p5(sketch => {
 
     createInterface();
     createSentences();
+    selectTrees();
+    createCoordinates(sketch);
   };
 
   createInterface = () => {
