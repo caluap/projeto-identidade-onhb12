@@ -61,7 +61,7 @@ let regularSketch = new p5(sketch => {
       angle: Math.PI / 7,
       lenMult: 0.6,
       iterations: 4,
-      strokes: [2, 1, 1, 2],
+      strokes: [3, 2, 1, 1.5],
       colors: null,
       axiom: "F",
       rules: [{ a: "F", b: "F[+F]F[-F]F" }]
@@ -70,7 +70,7 @@ let regularSketch = new p5(sketch => {
       angle: sketch.radians(25),
       lenMult: 0.8,
       iterations: 5,
-      strokes: [9, 6, 3, 1, 1],
+      strokes: [3, 2, 1],
       colors: null,
       axiom: "X",
       rules: [
@@ -82,7 +82,7 @@ let regularSketch = new p5(sketch => {
       angle: sketch.radians(25),
       lenMult: 0.4,
       iterations: 6,
-      strokes: [9, 6, 3, 1, 1, 0.5],
+      strokes: [3, 2, 1, 1, 0.5],
       colors: null,
       axiom: "X",
       rules: [
@@ -94,7 +94,7 @@ let regularSketch = new p5(sketch => {
       angle: Math.PI / 9,
       lenMult: 0.2,
       iterations: 7,
-      strokes: [5, 1],
+      strokes: [2, 1],
       colors: null,
       axiom: "X",
       rules: [{ a: "F", b: "FF" }, { a: "X", b: "F[+X]F[-X]+X" }]
@@ -103,7 +103,7 @@ let regularSketch = new p5(sketch => {
       angle: sketch.radians(20),
       lenMult: 1.2,
       iterations: 4,
-      strokes: [5, 2, 2, 1],
+      strokes: [3, 2, 2, 1],
       colors: null,
       axiom: "X",
       rules: [
@@ -173,48 +173,59 @@ let regularSketch = new p5(sketch => {
       colors = lSystem.colors;
     }
 
-    for (let i = 0; i < currentSentence.length; i++) {
-      let currChar = currentSentence.charAt(i);
+    let mult = 7;
+    for (let j = 0; j < 2; j++) {
+      sketch.push();
+      for (let i = 0; i < currentSentence.length; i++) {
+        let currChar = currentSentence.charAt(i);
 
-      switch (currChar) {
-        case "F":
-          if (level >= strokes.length) {
-            sketch.strokeWeight(scaling * strokes[strokes.length - 1]);
-          } else {
-            sketch.strokeWeight(scaling * strokes[level]);
-          }
+        switch (currChar) {
+          case "F":
+            if (level >= strokes.length) {
+              sketch.strokeWeight(mult * scaling * strokes[strokes.length - 1]);
+            } else {
+              sketch.strokeWeight(mult * scaling * strokes[level]);
+            }
 
-          let c;
-          if (level >= colors.length) {
-            c = sketch.color(colors[colors.length - 1]);
-          } else {
-            c = sketch.color(colors[level]);
-          }
-          if (tint) {
-            c = sketch.lerpColor(c, tint, 0.8);
-          }
-          sketch.stroke(c);
+            let c;
+            if (j == 0) {
+              c = sketch.color(0, 12);
+            } else {
+              if (level >= colors.length) {
+                c = sketch.color(colors[colors.length - 1]);
+              } else {
+                c = sketch.color(colors[level]);
+              }
+              if (tint) {
+                c = sketch.lerpColor(c, tint, 0.8);
+              }
+            }
 
-          let randLen = jit(len);
+            sketch.stroke(c);
 
-          sketch.line(0, 0, 0, -randLen);
-          sketch.translate(0, -randLen);
-          break;
-        case "+":
-          sketch.rotate(dir * jit(lSystem.angle));
-          break;
-        case "-":
-          sketch.rotate(-dir * jit(lSystem.angle));
-          break;
-        case "[":
-          level++;
-          sketch.push();
-          break;
-        case "]":
-          level--;
-          sketch.pop();
-          break;
+            let randLen = len;
+
+            sketch.line(0, 0, 0, -randLen);
+            sketch.translate(0, -randLen);
+            break;
+          case "+":
+            sketch.rotate(dir * lSystem.angle);
+            break;
+          case "-":
+            sketch.rotate(-dir * lSystem.angle);
+            break;
+          case "[":
+            level++;
+            sketch.push();
+            break;
+          case "]":
+            level--;
+            sketch.pop();
+            break;
+        }
       }
+      sketch.pop();
+      mult = 1;
     }
   };
 
@@ -228,7 +239,8 @@ let regularSketch = new p5(sketch => {
       let x = Math.random() * sketch.width * (1 + off * 2) - off * sketch.width;
 
       // i don't use a simple random to increase the chance of trees on lower y values
-      let y = Math.random() * Math.random() * sketch.height + yOff;
+      let y =
+        Math.random() * Math.random() * Math.random() * sketch.height + yOff;
       coords.push({ x: x, y: y });
     }
 
@@ -265,7 +277,7 @@ let regularSketch = new p5(sketch => {
 
       sketch.resetMatrix();
 
-      if (i % 13 == 0) {
+      if (i % 11 == 0) {
         sketch.noStroke();
         sketch.fill(0, 13);
         // sketch.fill(203, 0, 114, 1);
