@@ -155,13 +155,7 @@ function genericDraw(sketch, resMult = 1, cooper) {
 
   let iType = 0;
 
-  let nVeils = 60;
-
-  // this will make the veil appear around nVeils times (or nTrees, if lower than nVeils)
-  let div = Math.min(1, Math.round(nTrees / nVeils));
-
-  let firstY = coords[0].y;
-  let lastY = coords[coords.length - 1].y;
+  let firstY = coords[0].y * resMult;
 
   for (let i = 0; i < nTrees; i++) {
     if (i % 10 == 0 && debug) {
@@ -197,7 +191,10 @@ function genericDraw(sketch, resMult = 1, cooper) {
     let tree = trees[i];
 
     // some perspective
-    let pY = (coords[i].y - firstY) / (lastY - firstY);
+    let pY = (y - firstY) / (sketch.height - firstY);
+    if (pY > 1) {
+      pY = 1;
+    }
     let scaling = resMult * (3 / 5) * (pY + 0.1);
 
     if (debugPos) {
@@ -216,14 +213,6 @@ function genericDraw(sketch, resMult = 1, cooper) {
     );
 
     sketch.resetMatrix();
-
-    if (i % div == 0) {
-      sketch.noStroke();
-      sketch.fill(bg, Math.ceil(Math.max(1, (255 * 4) / 5 / nVeils)));
-      // sketch.fill(203, 0, 114, 1);
-      sketch.rect(0, 0, sketch.width, sketch.height);
-      sketch.noFill();
-    }
   }
 
   sketch.fill(255 - bg);
@@ -267,7 +256,7 @@ function turtle(
     colors = lSystem.colors;
   }
 
-  let mult = 2;
+  let mult = 5;
   for (let j = 0; j < 2; j++) {
     sketch.push();
     for (let i = 0; i < currentSentence.length; i++) {
@@ -283,7 +272,7 @@ function turtle(
 
           let c;
           if (j == 0) {
-            c = sketch.color(bg, 255 * 0.1);
+            c = sketch.color(bg, 255 * 0.3);
           } else {
             if (level >= colors.length) {
               c = sketch.color(colors[colors.length - 1]);
@@ -291,7 +280,7 @@ function turtle(
               c = sketch.color(colors[level]);
             }
             if (tint) {
-              c = sketch.lerpColor(c, tint, 0.8);
+              c = sketch.lerpColor(c, tint, 0.9);
             }
           }
 
@@ -319,7 +308,7 @@ function turtle(
       }
     }
     sketch.pop();
-    mult = 1;
+    mult = 1.5;
   }
 }
 
