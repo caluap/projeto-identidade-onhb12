@@ -76,6 +76,11 @@ function genericDraw(sketch, resMult = 1) {
   // this will make the veil appear around 66 times (or nTrees, if lower than 100)
   let div = Math.min(1, Math.round(nTrees / 66));
 
+  let nVeils = 60;
+
+  // this will make the veil appear around nVeils times (or nTrees, if lower than nVeils)
+  let div = Math.min(1, Math.round(nTrees / nVeils));
+
   let firstY = coords[0].y;
   let lastY = coords[coords.length - 1].y;
 
@@ -111,7 +116,7 @@ function genericDraw(sketch, resMult = 1) {
 
     if (i % div == 0) {
       sketch.noStroke();
-      sketch.fill(bg, 13);
+      sketch.fill(bg, Math.ceil(Math.max(1, 255 / 2 / nVeils)));
       // sketch.fill(203, 0, 114, 1);
       sketch.rect(0, 0, sketch.width, sketch.height);
       sketch.noFill();
