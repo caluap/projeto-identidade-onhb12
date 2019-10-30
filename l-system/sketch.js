@@ -280,7 +280,7 @@ function turtle(
               c = sketch.color(colors[level]);
             }
             if (tint) {
-              c = sketch.lerpColor(c, tint, 0.9);
+              c = sketch.lerpColor(c, tint, 0.95);
             }
           }
 
