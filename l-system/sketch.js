@@ -1,6 +1,10 @@
-let r = 4;
-let nTrees = 400;
 let debug = true;
+
+let nTrees = 66;
+let lSystem = [];
+let sentences = [];
+
+let r = 4;
 let w = 210 * r,
   h = 297 * r;
 
@@ -26,15 +30,158 @@ function processSentence(currentSentence, rules, axiom = "X") {
   return nextSentence;
 }
 
-function saveSVG(strokeWeight) {
-  let svgSketch = new p5(sketch => {
+function genericDraw(sketch) {
+  let off = 0.05;
+  let yOff = sketch.height * 0.2;
+
+  // random positions
+  let coords = [];
+  for (let i = 0; i < nTrees; i++) {
+    let x = Math.random() * sketch.width * (1 + off * 2) - off * sketch.width;
+
+    // i don't use a simple random to increase the chance of trees on lower y values
+    let y =
+      Math.random() * Math.random() * Math.random() * sketch.height + yOff;
+    coords.push({ x: x, y: y });
+  }
+
+  coords.sort((a, b) => {
+    return a.y - b.y;
+  });
+
+  sketch.background(0);
+  sketch.noStroke();
+  sketch.fill("#cb0072");
+  sketch.rect(0, 0, sketch.width, yOff);
+  sketch.noFill();
+
+  for (let i = 0; i < nTrees; i++) {
+    if (i % 10 == 0 && debug) {
+      console.log(`tree nº${i}`);
+    }
+
+    sketch.translate(coords[i].x, coords[i].y);
+
+    // chooses tree
+    let tree = Math.round(Math.random() * (lSystem.length - 1));
+
+    // some perspective
+    let pY = (coords[i].y - yOff) / sketch.height;
+    let scaling = (3 / 5) * (pY + 0.1);
+
+    turtle(
+      sketch,
+      sentences[tree],
+      lSystem[tree],
+      scaling,
+      sketch.lerpColor(sketch.color("#a1005a"), sketch.color("#cb0072"), pY)
+    );
+
+    sketch.resetMatrix();
+
+    if (i % 11 == 0) {
+      sketch.noStroke();
+      sketch.fill(0, 13);
+      // sketch.fill(203, 0, 114, 1);
+      sketch.rect(0, 0, sketch.width, sketch.height);
+      sketch.noFill();
+    }
+  }
+  if (debug) {
+    console.log(coords);
+  }
+}
+
+function turtle(
+  sketch,
+  currentSentence,
+  lSystem,
+  scaling = 1 / 2,
+  tint = null
+) {
+  let dir = Math.random() > 0.5 ? -1 : 1;
+  let baseLen = 9;
+  let len = jit(baseLen * lSystem.lenMult * scaling);
+  let strokes, colors;
+  let level = 0;
+
+  if (!lSystem.strokes) {
+    strokes = [4, 2, 1, 1, 0.5];
+  } else {
+    strokes = lSystem.strokes;
+  }
+  if (!lSystem.colors) {
+    colors = ["#fff"];
+  } else {
+    colors = lSystem.colors;
+  }
+
+  let mult = 7;
+  for (let j = 0; j < 2; j++) {
+    sketch.push();
+    for (let i = 0; i < currentSentence.length; i++) {
+      let currChar = currentSentence.charAt(i);
+
+      switch (currChar) {
+        case "F":
+          if (level >= strokes.length) {
+            sketch.strokeWeight(mult * scaling * strokes[strokes.length - 1]);
+          } else {
+            sketch.strokeWeight(mult * scaling * strokes[level]);
+          }
+
+          let c;
+          if (j == 0) {
+            c = sketch.color(0, 12);
+          } else {
+            if (level >= colors.length) {
+              c = sketch.color(colors[colors.length - 1]);
+            } else {
+              c = sketch.color(colors[level]);
+            }
+            if (tint) {
+              c = sketch.lerpColor(c, tint, 0.8);
+            }
+          }
+
+          sketch.stroke(c);
+
+          let randLen = len;
+
+          sketch.line(0, 0, 0, -randLen);
+          sketch.translate(0, -randLen);
+          break;
+        case "+":
+          sketch.rotate(dir * lSystem.angle);
+          break;
+        case "-":
+          sketch.rotate(-dir * lSystem.angle);
+          break;
+        case "[":
+          level++;
+          sketch.push();
+          break;
+        case "]":
+          level--;
+          sketch.pop();
+          break;
+      }
+    }
+    sketch.pop();
+    mult = 1;
+  }
+}
+
+function savePNG() {
+  let pngSketch = new p5(sketch => {
     sketch.setup = () => {
-      let cnv = sketch.createCanvas(w, h, sketch.SVG);
+      let cnv = sketch.createCanvas(w, h);
     };
     sketch.draw = () => {
       console.log("will draw...");
+      genericDraw(sketch);
+
       sketch.noLoop();
-      console.log("will save...");
       let today = new Date();
       let date =
         today.getFullYear() +
@@ -43,16 +190,14 @@ function saveSVG(strokeWeight) {
         "-" +
         today.getDate();
       let time = today.getHours() + "-" + today.getMinutes();
-      let fileName = "l-system-" + date + "--" + time + ".svg";
+      let fileName = "l-system-" + date + "--" + time + ".png";
+      console.log(`will save... ${fileName}`);
       sketch.save(fileName);
     };
   }, "hidden-canvas-container");
 }
 
 let regularSketch = new p5(sketch => {
-  let sentences = [];
-  let lSystem = [];
-
   sketch.setup = () => {
     let cnv = sketch.createCanvas(w, h);
     sketch.noLoop();
@@ -121,8 +266,14 @@ let regularSketch = new p5(sketch => {
     let els = [];
 
     els.push(
-      sketch.createButton("run").mouseClicked(() => {
+      sketch.createButton("rerun").mouseClicked(() => {
         sketch.redraw();
+      })
+    );
+
+    els.push(
+      sketch.createButton("save").mouseClicked(() => {
+        savePNG();
       })
     );
 
@@ -155,136 +306,7 @@ let regularSketch = new p5(sketch => {
     return v * (Math.random() * rand + original);
   };
 
-  turtle = (currentSentence, lSystem, scaling = 1 / 2, tint = null) => {
-    let dir = Math.random() > 0.5 ? -1 : 1;
-    let baseLen = 9;
-    let len = jit(baseLen * lSystem.lenMult * scaling);
-    let strokes, colors;
-    let level = 0;
-
-    if (!lSystem.strokes) {
-      strokes = [4, 2, 1, 1, 0.5];
-    } else {
-      strokes = lSystem.strokes;
-    }
-    if (!lSystem.colors) {
-      colors = ["#fff"];
-    } else {
-      colors = lSystem.colors;
-    }
-
-    let mult = 7;
-    for (let j = 0; j < 2; j++) {
-      sketch.push();
-      for (let i = 0; i < currentSentence.length; i++) {
-        let currChar = currentSentence.charAt(i);
-
-        switch (currChar) {
-          case "F":
-            if (level >= strokes.length) {
-              sketch.strokeWeight(mult * scaling * strokes[strokes.length - 1]);
-            } else {
-              sketch.strokeWeight(mult * scaling * strokes[level]);
-            }
-
-            let c;
-            if (j == 0) {
-              c = sketch.color(0, 12);
-            } else {
-              if (level >= colors.length) {
-                c = sketch.color(colors[colors.length - 1]);
-              } else {
-                c = sketch.color(colors[level]);
-              }
-              if (tint) {
-                c = sketch.lerpColor(c, tint, 0.8);
-              }
-            }
-
-            sketch.stroke(c);
-
-            let randLen = len;
-
-            sketch.line(0, 0, 0, -randLen);
-            sketch.translate(0, -randLen);
-            break;
-          case "+":
-            sketch.rotate(dir * lSystem.angle);
-            break;
-          case "-":
-            sketch.rotate(-dir * lSystem.angle);
-            break;
-          case "[":
-            level++;
-            sketch.push();
-            break;
-          case "]":
-            level--;
-            sketch.pop();
-            break;
-        }
-      }
-      sketch.pop();
-      mult = 1;
-    }
-  };
-
   sketch.draw = () => {
-    let off = 0.05;
-    let yOff = sketch.height * 0.2;
-
-    // random positions
-    let coords = [];
-    for (let i = 0; i < nTrees; i++) {
-      let x = Math.random() * sketch.width * (1 + off * 2) - off * sketch.width;
-
-      // i don't use a simple random to increase the chance of trees on lower y values
-      let y =
-        Math.random() * Math.random() * Math.random() * sketch.height + yOff;
-      coords.push({ x: x, y: y });
-    }
-
-    coords.sort((a, b) => {
-      return a.y - b.y;
-    });
-
-    sketch.background(0);
-    sketch.noStroke();
-    sketch.fill("#cb0072");
-    sketch.rect(0, 0, sketch.width, yOff);
-    sketch.noFill();
-
-    for (let i = 0; i < nTrees; i++) {
-      if (i % 10 == 0 && debug) {
-        console.log(`tree nº${i}`);
-      }
-
-      sketch.translate(coords[i].x, coords[i].y);
-
-      // chooses tree
-      let tree = Math.round(Math.random() * (lSystem.length - 1));
-
-      // some perspective
-      let pY = (coords[i].y - yOff) / sketch.height;
-      let scaling = (3 / 5) * (pY + 0.1);
-
-      turtle(
-        sentences[tree],
-        lSystem[tree],
-        scaling,
-        sketch.lerpColor(sketch.color("#a1005a"), sketch.color("#cb0072"), pY)
-      );
-
-      sketch.resetMatrix();
-
-      if (i % 11 == 0) {
-        sketch.noStroke();
-        sketch.fill(0, 13);
-        // sketch.fill(203, 0, 114, 1);
-        sketch.rect(0, 0, sketch.width, sketch.height);
-        sketch.noFill();
-      }
-    }
-    console.log(coords);
+    genericDraw(sketch);
   };
 }, "regular-canvas-container");
