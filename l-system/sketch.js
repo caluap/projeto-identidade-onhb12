@@ -10,8 +10,6 @@ let nTrees = 400;
 let lSystem = [];
 let sentences = [];
 
-let cooper;
-
 let trees = [];
 
 let coords = [];
@@ -71,22 +69,23 @@ function createCoordinates(sketch) {
   });
 
   typeCoords = [];
-  for (let i = 0; i < text.length; i++) {
-    // random positions
-    let margin = 0.1;
 
-    let minX = sketch.width * margin;
-    let maxX = sketch.width * (1 - 2 * margin) - minX;
+  let offX = 0.03;
+  let initTypeCords = [
+    { x: 0.11 - offX, y: 0.41 },
+    { x: 0.33 - offX, y: 0.47 },
+    { x: 0.55 - offX, y: 0.54 },
+    { x: 0.77 - offX, y: 0.59 },
+    { x: 0.11 - offX, y: 0.87 },
+    { x: 0.31 - offX, y: 0.87 }
+  ];
 
-    let margY = sketch.height * margin;
-    let minY = coords[0].y + margY;
-    let maxY = coords[coords.length - 1].y - margY;
+  for (let i = 0; i < initTypeCords.length; i++) {
+    let minY = sketch.height * yOff;
+    let rangeY = sketch.height - minY;
 
-    let rangeX = maxX - minX;
-    let rangeY = maxY - minY;
-
-    let x = Math.random() * rangeX + minX;
-    let y = Math.random() * rangeY + minY;
+    let x = initTypeCords[i].x * sketch.width;
+    let y = initTypeCords[i].y * rangeY + minY;
 
     typeCoords.push({ x: x, y: y });
   }
@@ -98,8 +97,10 @@ function createCoordinates(sketch) {
   }
 }
 
-function genericDraw(sketch, resMult = 1) {
-  let baseFontSize = 200;
+function genericDraw(sketch, resMult = 1, cooper) {
+  let baseFontSize = 270;
+
+  sketch.textFont(cooper);
   sketch.textSize(baseFontSize * resMult);
 
   let cAlpha = 255 * 0.9;
@@ -181,11 +182,23 @@ function genericDraw(sketch, resMult = 1) {
 
     if (i % div == 0) {
       sketch.noStroke();
-      sketch.fill(bg, Math.ceil(Math.max(1, (255 * 3) / 5 / nVeils)));
+      sketch.fill(bg, Math.ceil(Math.max(1, (255 * 4) / 5 / nVeils)));
       // sketch.fill(203, 0, 114, 1);
       sketch.rect(0, 0, sketch.width, sketch.height);
       sketch.noFill();
     }
+  }
+
+  sketch.fill(255 - bg);
+  while (iType < text.length) {
+    let tY = typeCoords[iType].y * resMult;
+    let tX = typeCoords[iType].x * resMult;
+    sketch.text(text[iType], tX, tY);
+    if (debugPos) {
+      sketch.fill(255, 255, 0);
+      sketch.ellipse(tX, tY, 3, 3);
+    }
+    iType++;
   }
 
   if (debug) {
@@ -217,7 +230,7 @@ function turtle(
     colors = lSystem.colors;
   }
 
-  let mult = 4;
+  let mult = 2;
   for (let j = 0; j < 2; j++) {
     sketch.push();
     for (let i = 0; i < currentSentence.length; i++) {
@@ -276,12 +289,16 @@ function turtle(
 function savePNG() {
   let pngSketch = new p5(sketch => {
     let resMult = Math.round(300 / 72);
+    let cooper2;
+    sketch.preload = () => {
+      cooper2 = sketch.loadFont("../assets/CooperHewitt-Medium.otf");
+    };
     sketch.setup = () => {
       let cnv = sketch.createCanvas(w * resMult, h * resMult);
     };
     sketch.draw = () => {
       console.log("will draw...");
-      genericDraw(sketch, resMult);
+      genericDraw(sketch, resMult, cooper2);
 
       sketch.noLoop();
       let today = new Date();
@@ -300,6 +317,7 @@ function savePNG() {
 }
 
 let regularSketch = new p5(sketch => {
+  let cooper;
   sketch.preload = () => {
     cooper = sketch.loadFont("../assets/CooperHewitt-Medium.otf");
   };
@@ -367,8 +385,6 @@ let regularSketch = new p5(sketch => {
     createSentences();
     selectTrees();
     createCoordinates(sketch);
-
-    sketch.textFont(cooper);
   };
 
   createInterface = () => {
@@ -420,6 +436,6 @@ let regularSketch = new p5(sketch => {
   };
 
   sketch.draw = () => {
-    genericDraw(sketch);
+    genericDraw(sketch, 1, cooper);
   };
 }, "regular-canvas-container");
