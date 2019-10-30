@@ -15,7 +15,7 @@ let trees = [];
 let coords = [];
 
 let xOff = 0.05,
-  yOff = 0.2;
+  yOff = 0.3;
 
 let r = 4;
 let w = 210 * r,
@@ -57,10 +57,10 @@ function createCoordinates(sketch) {
     let x = Math.random() * sketch.width * (1 + xOff * 2) - xOff * sketch.width;
 
     // i don't use a simple random to increase the chance of trees on lower y values
+    let rand = Math.pow(Math.random() * Math.random() * Math.random(), 8 / 9);
+    let bonus = sketch.height * 0.5;
     let y =
-      Math.pow(Math.random() * Math.random() * Math.random(), 7 / 8) *
-        sketch.height +
-      yOff * sketch.height;
+      rand * sketch.height * (1 - yOff) + yOff * sketch.height + rand * bonus;
     coords.push({ x: x, y: y });
   }
 
