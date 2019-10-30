@@ -97,6 +97,29 @@ function createCoordinates(sketch) {
   }
 }
 
+// from https://p5js.org/examples/color-linear-gradient.html
+function setGradient(sketch, x, y, w, h, c1, c2, axis) {
+  sketch.noFill();
+
+  if (axis === sketch.Y_AXIS) {
+    // Top to bottom gradient
+    for (let i = y; i <= y + h; i++) {
+      let inter = sketch.map(i, y, y + h, 0, 1);
+      let c = sketch.lerpColor(c1, c2, inter);
+      sketch.stroke(c);
+      sketch.line(x, i, x + w, i);
+    }
+  } else if (axis === sketch.X_AXIS) {
+    // Left to right gradient
+    for (let i = x; i <= x + w; i++) {
+      let inter = sketch.map(i, x, x + w, 0, 1);
+      let c = sketch.lerpColor(c1, c2, inter);
+      sketch.stroke(c);
+      sketch.line(i, y, i, y + h);
+    }
+  }
+}
+
 function genericDraw(sketch, resMult = 1, cooper) {
   let baseFontSize = 270;
 
@@ -106,15 +129,27 @@ function genericDraw(sketch, resMult = 1, cooper) {
   let cAlpha = 255 * 0.9;
 
   let mixedOriginColor = sketch.lerpColor(
-    sketch.color(161, 0, 90, cAlpha),
+    // sketch.color(161, 0, 90, cAlpha),
+    sketch.color(bg),
     sketch.color(bg, cAlpha),
-    0.5
+    0.99
   );
 
   sketch.background(bg);
   sketch.noStroke();
-  sketch.fill(mixedOriginColor);
-  sketch.rect(0, 0, sketch.width, yOff * sketch.height);
+  // sketch.fill(mixedOriginColor);
+  // sketch.fill("#cb0072");
+  setGradient(
+    sketch,
+    0,
+    0,
+    sketch.width,
+    yOff * sketch.height,
+    sketch.color("#cb0072"),
+    sketch.color(161, 0, 90, cAlpha),
+    sketch.Y_AXIS
+  );
+  // sketch.rect(0, 0, sketch.width, yOff * sketch.height);
   sketch.noFill();
 
   let iType = 0;
@@ -139,6 +174,7 @@ function genericDraw(sketch, resMult = 1, cooper) {
     if (iType < text.length) {
       tY = typeCoords[iType].y * resMult;
     }
+    sketch.noStroke();
 
     while (y > tY && iType < text.length) {
       sketch.fill(255 - bg);
