@@ -1,8 +1,12 @@
 let debug = true;
+let debugPos = false;
 
 let bg = 0;
 
-let nTrees = 66;
+let typeCoords = [];
+let text = "ONHB12";
+
+let nTrees = 400;
 let lSystem = [];
 let sentences = [];
 
@@ -64,17 +68,46 @@ function createCoordinates(sketch) {
   coords.sort((a, b) => {
     return a.y - b.y;
   });
+
+  typeCoords = [];
+  for (let i = 0; i < text.length; i++) {
+    // random positions
+    let margin = 0.1;
+
+    let minX = sketch.width * margin;
+    let maxX = sketch.width * (1 - 2 * margin) - minX;
+
+    let margY = sketch.height * margin;
+    let minY = coords[0].y + margY;
+    let maxY = coords[coords.length - 1].y - margY;
+
+    let rangeX = maxX - minX;
+    let rangeY = maxY - minY;
+
+    let x = Math.random() * rangeX + minX;
+    let y = Math.random() * rangeY + minY;
+
+    typeCoords.push({ x: x, y: y });
+  }
+  typeCoords.sort((a, b) => {
+    return a.y - b.y;
+  });
+  if (debug) {
+    console.log(typeCoords);
+  }
 }
 
 function genericDraw(sketch, resMult = 1) {
+  let baseFontSize = 200;
+  sketch.textSize(baseFontSize * resMult);
+
   sketch.background(bg);
   sketch.noStroke();
   sketch.fill("#cb0072");
   sketch.rect(0, 0, sketch.width, yOff * sketch.height);
   sketch.noFill();
 
-  // this will make the veil appear around 66 times (or nTrees, if lower than 100)
-  let div = Math.min(1, Math.round(nTrees / 66));
+  let iType = 0;
 
   let nVeils = 60;
 
@@ -89,7 +122,29 @@ function genericDraw(sketch, resMult = 1) {
       console.log(`tree nº${i}`);
     }
 
-    sketch.translate(coords[i].x * resMult, coords[i].y * resMult);
+    let x = coords[i].x * resMult;
+    let y = coords[i].y * resMult;
+
+    let tY;
+    if (iType < text.length) {
+      tY = typeCoords[iType].y * resMult;
+    }
+
+    while (y > tY && iType < text.length) {
+      sketch.fill(255 - bg);
+      let tX = typeCoords[iType].x * resMult;
+      sketch.text(text[iType], tX, tY);
+      if (debugPos) {
+        sketch.fill(255, 255, 0);
+        sketch.ellipse(tX, tY, 3, 3);
+      }
+
+      iType++;
+      if (iType < text.length) {
+        tY = typeCoords[iType].y * resMult;
+      }
+      sketch.noFill();
+    }
 
     // chooses tree
     let tree = trees[i];
@@ -104,6 +159,13 @@ function genericDraw(sketch, resMult = 1) {
       0.5
     );
 
+    if (debugPos) {
+      sketch.strokeWeight(1);
+      sketch.fill(255);
+      sketch.ellipse(x, y, 5, 5);
+    }
+
+    sketch.translate(x, y);
     turtle(
       sketch,
       sentences[tree],
@@ -122,6 +184,7 @@ function genericDraw(sketch, resMult = 1) {
       sketch.noFill();
     }
   }
+
   if (debug) {
     console.log(coords);
   }
@@ -301,6 +364,8 @@ let regularSketch = new p5(sketch => {
     createSentences();
     selectTrees();
     createCoordinates(sketch);
+
+    sketch.textFont(cooper);
   };
 
   createInterface = () => {
