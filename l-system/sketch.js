@@ -138,8 +138,6 @@ function genericDraw(sketch, resMult = 1, cooper) {
 
   sketch.background(bg);
   sketch.noStroke();
-  // sketch.fill(mixedOriginColor);
-  // sketch.fill("#cb0072");
   setGradient(
     sketch,
     0,
@@ -150,7 +148,6 @@ function genericDraw(sketch, resMult = 1, cooper) {
     sketch.color(161, 0, 90, cAlpha),
     sketch.Y_AXIS
   );
-  // sketch.rect(0, 0, sketch.width, yOff * sketch.height);
   sketch.noFill();
 
   let iType = 0;
