@@ -203,13 +203,19 @@ function genericDraw(sketch, resMult = 1, cooper) {
       sketch.ellipse(x, y, 5, 5);
     }
 
+    let invPy = Math.pow(1 - pY, 2);
+
     sketch.translate(x, y);
     turtle(
       sketch,
       sentences[tree],
       lSystem[tree],
       scaling,
-      sketch.lerpColor(mixedOriginColor, sketch.color(203, 0, 114, cAlpha), pY)
+      sketch.lerpColor(
+        sketch.color(203, 0, 114, cAlpha),
+        mixedOriginColor,
+        invPy
+      )
     );
 
     sketch.resetMatrix();
