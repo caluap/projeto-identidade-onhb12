@@ -107,8 +107,8 @@ function setGradient(sketch, x, y, w, h, c1, c2, axis) {
     for (let i = y; i <= y + h; i++) {
       let inter = sketch.map(i, y, y + h, 0, 1);
       let c = sketch.lerpColor(c1, c2, inter);
-      sketch.stroke(c);
-      sketch.line(x, i, x + w, i);
+      sketch.fill(c);
+      sketch.rect(x, i, w, 1);
     }
   } else if (axis === sketch.X_AXIS) {
     // Left to right gradient
