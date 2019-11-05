@@ -6,7 +6,8 @@ let bg = 0;
 let typeCoords = [];
 let text = "ONHB";
 
-let nTrees = 400;
+let nTrees = 150;
+// let nTrees = 33;
 let lSystem = [];
 let sentences = [];
 
