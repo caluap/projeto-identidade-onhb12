@@ -205,7 +205,7 @@ let regularSketch = new p5(sketch => {
 
     els.push(sketch.createP(""));
 
-    sliderRadius = sketch.createSlider(5, 200, 20, 1).input(() => {
+    sliderRadius = sketch.createSlider(5, 140, 10, 1).input(() => {
       document.getElementById(
         "p-radius"
       ).innerText = `brush radius: ${sliderRadius.value()}`;
@@ -233,7 +233,7 @@ let regularSketch = new p5(sketch => {
     els.push(sketch.createP(`stroke: ${sliderStroke.value()}`).id("p-stroke"));
     els.push(sliderStroke);
 
-    sliderMinDist = sketch.createSlider(2, 15, 5, 1).input(() => {
+    sliderMinDist = sketch.createSlider(0.5, 15, 5, 0.5).input(() => {
       let v = sliderMinDist.value();
       min_dist = parseInt(v);
       document.getElementById("p-min-dist").innerText = `min dist: ${v}`;
