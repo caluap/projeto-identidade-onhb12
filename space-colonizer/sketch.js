@@ -6,9 +6,10 @@ let min_dist = 5,
 
 let pickedColor = null;
 
-let r = 4;
-let w = 210 * r,
-  h = 297 * r;
+let r = 3;
+let bleed = 3;
+let w = (297 + bleed + bleed) * r,
+  h = (420 + bleed + bleed) * r;
 
 let growButton, showLeavesButton, penModeButton;
 
