@@ -6,10 +6,37 @@ let min_dist = 5,
 
 let pickedColor = null;
 
-let r = 3;
-let bleed = 3;
-let w = (297 + bleed + bleed) * r,
-  h = (420 + bleed + bleed) * r;
+// A3 with bleed
+// let bleed = 3;
+// let r = 1;
+// let w = (297 + bleed + bleed) * r,
+//   h = (420 + bleed + bleed) * r;
+
+// botton
+let bleed = 0;
+let r = 7;
+let w = (55 + bleed + bleed) * r,
+  h = (55 + bleed + bleed) * r;
+
+// twitter head
+// w = 1500;
+// h = 500;
+
+// insta feed
+// w = 1080;
+// h = 1080;
+
+// insta stories
+// w = 1080 / 2;
+// h = 1920 / 2;
+
+// twitter feed
+// w = 1024;
+// h = 512;
+
+//facebook feed
+w = 1200;
+h = 630;
 
 let growButton, showLeavesButton, penModeButton;
 
@@ -68,9 +95,9 @@ let regularSketch = new p5(sketch => {
         sketch.pixels[off + 1],
         sketch.pixels[off + 2]
       ];
-      document.getElementById("picked-color").style.backgroundColor = `rgb(${
-        c[0]
-      }, ${c[1]}, ${c[2]})`;
+      document.getElementById(
+        "picked-color"
+      ).style.backgroundColor = `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
       pickedColor = c;
       sketch.updatePixels();
     }
@@ -243,7 +270,7 @@ let regularSketch = new p5(sketch => {
     );
     els.push(sliderMinDist);
 
-    sliderMaxDist = sketch.createSlider(20, 200, 70, 1).input(() => {
+    sliderMaxDist = sketch.createSlider(0, 200, 70, 1).input(() => {
       let v = sliderMaxDist.value();
       max_dist = v;
       document.getElementById("p-max-dist").innerText = `max dist: ${v}`;
