@@ -141,6 +141,8 @@ let regularSketch = new p5(sketch => {
   };
 
   getOff = (x, y, d) => {
+    x = parseInt(x);
+    y = parseInt(y);
     return (y * d * sketch.width + x) * d * 4;
   };
 
